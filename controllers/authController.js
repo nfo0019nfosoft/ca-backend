@@ -173,3 +173,51 @@ exports.getProfile = async (
 
   }
 };
+
+
+/* =========================
+   UPDATE PROFILE
+========================= */
+
+exports.updateProfile = async (
+  req,
+  res
+) => {
+  try {
+
+    const user =
+      await User.findByIdAndUpdate(
+        req.user.id,
+        req.body,
+        {
+          new: true,
+          runValidators: true,
+        }
+      ).select("-password");
+
+    return res.status(200).json({
+      success: true,
+      user,
+      message:
+        "Profile Updated Successfully",
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+
+  }
+};
+
+
+
+
+
+
+
+

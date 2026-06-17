@@ -2,21 +2,28 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    // Login Details
+    // ======================
+    // LOGIN DETAILS
+    // ======================
+
     name: {
       type: String,
       required: true,
+      trim: true,
     },
 
     email: {
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
+      trim: true,
     },
 
     phone: {
       type: String,
       required: true,
+      trim: true,
     },
 
     password: {
@@ -26,7 +33,7 @@ const userSchema = new mongoose.Schema(
 
     role: {
       type: String,
-        enum: ["user", "vendor", "admin"],
+      enum: ["user", "vendor", "admin"],
       default: "user",
     },
 
@@ -35,52 +42,159 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
 
-    // Personal Info
-    designation: String,
+    // ======================
+    // PERSONAL INFORMATION
+    // ======================
 
-    // Business Info
-    companyName: String,
-    businessCategory: String,
-    businessType: String,
+    designation: {
+      type: String,
+      default: "",
+    },
 
-    gstNumber: String,
-    panNumber: String,
+    // ======================
+    // BUSINESS INFORMATION
+    // ======================
 
-    businessEmail: String,
-    website: String,
+    companyName: {
+      type: String,
+      default: "",
+    },
 
-    officeContactNumber: String,
+    businessCategory: {
+      type: String,
+      default: "",
+    },
 
-    // Address
-    addressLine1: String,
-    addressLine2: String,
+    businessType: {
+      type: String,
+      default: "",
+    },
 
-    country: String,
-    state: String,
-    city: String,
-    pincode: String,
+    gstNumber: {
+      type: String,
+      default: "",
+    },
 
-    // Business Details
-    industrySector: String,
-    natureOfBusiness: String,
-    registrationType: String,
+    panNumber: {
+      type: String,
+      default: "",
+    },
 
-    dateOfEstablishment: Date,
+    businessEmail: {
+      type: String,
+      default: "",
+    },
 
-    gstStatus: String,
-    gstRegistrationDate: Date,
+    website: {
+      type: String,
+      default: "",
+    },
 
-    annualTurnover: String,
-    teamSize: String,
+    officeContactNumber: {
+      type: String,
+      default: "",
+    },
 
-    numberOfBranches: Number,
+    // ======================
+    // ADDRESS
+    // ======================
 
-    accountingMethod: String,
-    financialYear: String,
+    addressLine1: {
+      type: String,
+      default: "",
+    },
 
-    tdsApplicable: String,
+    addressLine2: {
+      type: String,
+      default: "",
+    },
 
-    businessDescription: String,
+    country: {
+      type: String,
+      default: "",
+    },
+
+    state: {
+      type: String,
+      default: "",
+    },
+
+    city: {
+      type: String,
+      default: "",
+    },
+
+    pincode: {
+      type: String,
+      default: "",
+    },
+
+    // ======================
+    // ADVANCED BUSINESS DETAILS
+    // ======================
+
+    industrySector: {
+      type: String,
+      default: "",
+    },
+
+    natureOfBusiness: {
+      type: String,
+      default: "",
+    },
+
+    registrationType: {
+      type: String,
+      default: "",
+    },
+
+    dateOfEstablishment: {
+      type: Date,
+    },
+
+    gstStatus: {
+      type: String,
+      default: "",
+    },
+
+    gstRegistrationDate: {
+      type: Date,
+    },
+
+    annualTurnover: {
+      type: String,
+      default: "",
+    },
+
+    teamSize: {
+      type: String,
+      default: "",
+    },
+
+    numberOfBranches: {
+      type: Number,
+      default: 0,
+    },
+
+    accountingMethod: {
+      type: String,
+      default: "",
+    },
+
+    financialYear: {
+      type: String,
+      default: "",
+    },
+
+    tdsApplicable: {
+      type: String,
+      default: "",
+    },
+
+    businessDescription: {
+      type: String,
+      default: "",
+    },
 
     preferredServices: [
       {
@@ -88,17 +202,46 @@ const userSchema = new mongoose.Schema(
       },
     ],
 
-    // Uploaded Documents
+    // ======================
+    // DOCUMENTS
+    // ======================
+
     documents: {
-      panCard: String,
-      gstCertificate: String,
-      incorporationCertificate: String,
-      aadhaarCard: String,
-      bankStatement: String,
-      itrDocument: String,
+      panCard: {
+        type: String,
+        default: "",
+      },
+
+      gstCertificate: {
+        type: String,
+        default: "",
+      },
+
+      incorporationCertificate: {
+        type: String,
+        default: "",
+      },
+
+      aadhaarCard: {
+        type: String,
+        default: "",
+      },
+
+      bankStatement: {
+        type: String,
+        default: "",
+      },
+
+      itrDocument: {
+        type: String,
+        default: "",
+      },
     },
 
-    // Verification
+    // ======================
+    // VERIFICATION
+    // ======================
+
     emailVerified: {
       type: Boolean,
       default: false,
@@ -129,14 +272,76 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
 
+    // ======================
+    // PROFILE COMPLETION
+    // ======================
+
     profileCompletion: {
       type: Number,
       default: 0,
+    },
+personalCompleted: {
+  type: Boolean,
+  default: false,
+},
+
+businessCompleted: {
+  type: Boolean,
+  default: false,
+},
+
+documentsCompleted: {
+  type: Boolean,
+  default: false,
+},
+
+verificationCompleted: {
+  type: Boolean,
+  default: false,
+},
+    // ======================
+    // NOTIFICATIONS
+    // ======================
+
+    notifications: [
+      {
+        title: String,
+
+        message: String,
+
+        isRead: {
+          type: Boolean,
+          default: false,
+        },
+
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+
+    // ======================
+    // ACCOUNT STATUS
+    // ======================
+
+    accountStatus: {
+      type: String,
+      enum: ["active", "pending", "suspended"],
+      default: "active",
+    },
+
+    lastLogin: {
+      type: Date,
     },
   },
   {
     timestamps: true,
   }
 );
+
+
+
+
 
 module.exports = mongoose.model("User", userSchema);

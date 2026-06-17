@@ -104,28 +104,28 @@ officeCountryCode: {
     website: String,
 
     // KYC Documents
-    kyc: {
-      panCard: String,
-
-      aadhaarCard: String,
-
-      addressProof: String,
-
-      caCertificate: String,
-    },
+ kyc:{
+  panCard:String,
+  aadhaarCard:String,
+  photograph:String,
+  addressProof:String,
+  caCertificate:String
+},
 
     // Services Offered
-    services: [
-      {
-        serviceName: String,
+  services: [
+  {
+    serviceName: String,
 
-        price: Number,
+    pricingModel: String,
 
-        deliveryTime: String,
+    price: Number,
 
-        description: String,
-      },
-    ],
+    deliveryTime: String,
+
+    description: String,
+  },
+],
 
     // Bank Details
     bankDetails: {

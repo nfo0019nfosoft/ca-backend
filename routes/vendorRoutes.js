@@ -2,7 +2,7 @@ console.log("✅ Vendor Routes Loaded");
 
 const express = require("express");
 const router = express.Router();
-
+const upload = require("../middleware/upload");
 const authMiddleware = require("../middleware/authMiddleware");
 
 const {
@@ -10,8 +10,16 @@ const {
   loginVendor,
   getProfile,
   updateProfile,
-  updateServices
+  updateServices,
+  saveKyc,
+  savePhoto,
+  getAllVendors,
 } = require("../controllers/vendorAuthController");
+
+/* -------------------------
+   GET ALL VENDORS
+------------------------- */
+router.get("/", getAllVendors);
 
 /* -------------------------
    TEST ROUTE
@@ -45,6 +53,8 @@ router.get(
   getProfile
 );
 
+
+
 router.put(
   "/profile",
   (req, res, next) => {
@@ -55,11 +65,39 @@ router.put(
   updateProfile
 );
 
-
+/* -------------------------
+   SERVICES
+------------------------- */
 router.put(
   "/services",
   authMiddleware,
   updateServices
+);
+
+/* -------------------------
+   KYC
+------------------------- */
+router.post(
+  "/kyc",
+  authMiddleware,
+  upload.fields([
+    { name: "panCard", maxCount: 1 },
+    { name: "aadhaarCard", maxCount: 1 },
+    { name: "photograph", maxCount: 1 },
+    { name: "addressProof", maxCount: 1 },
+    { name: "caCertificate", maxCount: 1 },
+  ]),
+  saveKyc
+);
+
+/* -------------------------
+   PHOTO
+------------------------- */
+router.post(
+  "/photo",
+  authMiddleware,
+  upload.single("photo"),
+  savePhoto
 );
 
 module.exports = router;

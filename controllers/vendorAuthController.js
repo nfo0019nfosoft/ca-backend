@@ -127,34 +127,20 @@ exports.loginVendor = async (req, res) => {
 // =========================
 // GET PROFILE
 // =========================
-exports.getProfile = async (
-  req,
-  res
-) => {
+exports.getProfile = async (req, res) => {
   try {
- console.log("REQ.USER =", req.user);
-    console.log("REQ.USER.ID =", req.user?.id);
-    const vendor =
-      await Vendor.findById(
-        req.user.id
-      ).select("-password");
 
-    if (!vendor) {
-      return res.status(404).json({
-        success: false,
-        message:
-          "Vendor not found",
-      });
-    }
+    console.log("GET PROFILE HIT");
+    console.log("REQ.USER =", req.user);
 
     return res.status(200).json({
       success: true,
-      vendor,
+      user: req.user,
     });
 
   } catch (error) {
 
-    console.log(error);
+    console.log("PROFILE ERROR =>", error);
 
     return res.status(500).json({
       success: false,

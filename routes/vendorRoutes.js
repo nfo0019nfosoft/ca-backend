@@ -18,12 +18,6 @@ const {
 } = require("../controllers/vendorAuthController");
 
 /* -------------------------
-   GET ALL VENDORS
-------------------------- */
-router.get("/", getAllVendors);
-router.get("/:id", getVendorById);
-
-/* -------------------------
    TEST ROUTE
 ------------------------- */
 router.get("/test", (req, res) => {
@@ -39,7 +33,6 @@ router.get("/test", (req, res) => {
    AUTH ROUTES
 ------------------------- */
 router.post("/register", registerVendor);
-
 router.post("/login", loginVendor);
 
 /* -------------------------
@@ -54,8 +47,6 @@ router.get(
   authMiddleware,
   getProfile
 );
-
-
 
 router.put(
   "/profile",
@@ -101,5 +92,16 @@ router.post(
   upload.single("photo"),
   savePhoto
 );
+
+/* -------------------------
+   GET ALL VENDORS
+------------------------- */
+router.get("/", getAllVendors);
+
+/* -------------------------
+   GET SINGLE VENDOR
+   ALWAYS KEEP LAST
+------------------------- */
+router.get("/:id", getVendorById);
 
 module.exports = router;

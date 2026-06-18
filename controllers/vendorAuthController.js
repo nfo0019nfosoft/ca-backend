@@ -254,9 +254,15 @@ exports.updateServices = async (
 exports.saveKyc = async (req, res) => {
   try {
 
+    console.log("REQ USER =>", req.user);
+    console.log("REQ USER ID =>", req.user?.id);
+    console.log("FILES =>", req.files);
+
     const vendor = await Vendor.findById(
       req.user.id
     );
+
+    console.log("FOUND VENDOR =>", vendor);
 
     if (!vendor) {
       return res.status(404).json({
@@ -294,6 +300,8 @@ exports.saveKyc = async (req, res) => {
 
     await vendor.save();
 
+    console.log("KYC SAVED SUCCESSFULLY");
+
     return res.status(200).json({
       success: true,
       message: "KYC saved successfully",
@@ -302,7 +310,7 @@ exports.saveKyc = async (req, res) => {
 
   } catch (error) {
 
-    console.log(error);
+    console.log("KYC ERROR =>", error);
 
     return res.status(500).json({
       success: false,
@@ -311,7 +319,6 @@ exports.saveKyc = async (req, res) => {
 
   }
 };
-
 // =========================
 // SAVE PHOTO
 // =========================

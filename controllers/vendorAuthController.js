@@ -70,23 +70,27 @@ exports.registerVendor = async (req, res) => {
 // =========================
 // LOGIN VENDOR
 // =========================
-exports.loginVendor = async (
-  req,
-  res
-) => {
+exports.loginVendor = async (req, res) => {
   try {
 
     const { mobile } = req.body;
 
-    const vendor =
-      await Vendor.findOne({
-        $or: [
-          { mobile },
-          {
-            mobile: mobile.replace(/^91/, "")
-          }
-        ]
-      });
+    console.log("MOBILE RECEIVED =>", mobile);
+
+    const cleanMobile = mobile
+      .replace(/\D/g, "")
+      .slice(-10);
+
+    console.log("CLEAN MOBILE =>", cleanMobile);
+
+    const vendor = await Vendor.findOne({
+      $or: [
+        { mobile: cleanMobile },
+        { mobile: `91${cleanMobile}` },
+      ],
+    });
+
+    console.log("VENDOR FOUND =>", vendor);
 
     if (!vendor) {
       return res.status(404).json({
@@ -106,8 +110,7 @@ exports.loginVendor = async (
       }
     );
 
-    const vendorData =
-      vendor.toObject();
+    const vendorData = vendor.toObject();
 
     delete vendorData.password;
 

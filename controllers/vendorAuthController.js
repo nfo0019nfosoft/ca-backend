@@ -132,7 +132,8 @@ exports.getProfile = async (
   res
 ) => {
   try {
-
+ console.log("REQ.USER =", req.user);
+    console.log("REQ.USER.ID =", req.user?.id);
     const vendor =
       await Vendor.findById(
         req.user.id

@@ -14,12 +14,14 @@ const {
   saveKyc,
   savePhoto,
   getAllVendors,
+  getVendorById,
 } = require("../controllers/vendorAuthController");
 
 /* -------------------------
    GET ALL VENDORS
 ------------------------- */
 router.get("/", getAllVendors);
+router.get("/:id", getVendorById);
 
 /* -------------------------
    TEST ROUTE

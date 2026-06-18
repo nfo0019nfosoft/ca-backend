@@ -409,3 +409,58 @@ exports.getAllVendors = async (
 
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// =========================
+// GET SINGLE VENDOR
+// =========================
+
+exports.getVendorById = async (
+  req,
+  res
+) => {
+  try {
+
+    const vendor =
+      await Vendor.findById(
+        req.params.id
+      ).select("-password");
+
+    if (!vendor) {
+      return res.status(404).json({
+        success: false,
+        message: "Vendor not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      vendor,
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+
+  }
+};

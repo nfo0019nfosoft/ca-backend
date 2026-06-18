@@ -133,9 +133,15 @@ exports.getProfile = async (req, res) => {
     console.log("GET PROFILE HIT");
     console.log("REQ.USER =", req.user);
 
+    const vendor = await Vendor.findById(
+      req.user.id
+    ).select("-password");
+
+    console.log("VENDOR =>", vendor);
+
     return res.status(200).json({
       success: true,
-      user: req.user,
+      vendor,
     });
 
   } catch (error) {

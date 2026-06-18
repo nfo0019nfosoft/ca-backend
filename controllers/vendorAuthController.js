@@ -131,6 +131,7 @@ exports.getProfile = async (req, res) => {
   try {
 
     console.log("GET PROFILE HIT");
+
     console.log("REQ.USER =", req.user);
 
     const vendor = await Vendor.findById(
@@ -139,6 +140,13 @@ exports.getProfile = async (req, res) => {
 
     console.log("VENDOR =>", vendor);
 
+    if (!vendor) {
+      return res.status(404).json({
+        success: false,
+        message: "Vendor not found",
+      });
+    }
+
     return res.status(200).json({
       success: true,
       vendor,
@@ -146,7 +154,10 @@ exports.getProfile = async (req, res) => {
 
   } catch (error) {
 
-    console.log("PROFILE ERROR =>", error);
+    console.log(
+      "PROFILE ERROR =>",
+      error
+    );
 
     return res.status(500).json({
       success: false,

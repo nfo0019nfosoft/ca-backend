@@ -73,8 +73,28 @@ exports.registerVendor = async (req, res) => {
 exports.loginVendor = async (req, res) => {
   try {
 
+    const { mobile } = req.body;
+
+    let vendor = await Vendor.findOne({
+      mobile,
+    });
+
+    // Vendor lekapothe create cheyyi
+    if (!vendor) {
+
+      vendor = await Vendor.create({
+        fullName: "Vendor",
+        mobile,
+        email: `${mobile}@vendor.com`,
+        password: "temp123",
+        role: "vendor",
+      });
+
+    }
+
     const token = jwt.sign(
       {
+        id: vendor._id,
         role: "vendor",
       },
       process.env.JWT_SECRET,
@@ -83,17 +103,18 @@ exports.loginVendor = async (req, res) => {
       }
     );
 
+    const vendorData = vendor.toObject();
+    delete vendorData.password;
+
     return res.status(200).json({
       success: true,
       token,
-      user: {
-        fullName: "Vendor",
-        role: "vendor",
-        mobile: req.body.mobile,
-      },
+      user: vendorData,
     });
 
   } catch (error) {
+
+    console.log(error);
 
     return res.status(500).json({
       success: false,

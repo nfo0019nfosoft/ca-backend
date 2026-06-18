@@ -73,35 +73,8 @@ exports.registerVendor = async (req, res) => {
 exports.loginVendor = async (req, res) => {
   try {
 
-    const { mobile } = req.body;
-
-    console.log("MOBILE RECEIVED =>", mobile);
-
-    const cleanMobile = mobile
-      .replace(/\D/g, "")
-      .slice(-10);
-
-    console.log("CLEAN MOBILE =>", cleanMobile);
-
-    const vendor = await Vendor.findOne({
-      $or: [
-        { mobile: cleanMobile },
-        { mobile: `91${cleanMobile}` },
-      ],
-    });
-
-    console.log("VENDOR FOUND =>", vendor);
-
-    if (!vendor) {
-      return res.status(404).json({
-        success: false,
-        message: "Vendor not found",
-      });
-    }
-
     const token = jwt.sign(
       {
-        id: vendor._id,
         role: "vendor",
       },
       process.env.JWT_SECRET,
@@ -110,19 +83,17 @@ exports.loginVendor = async (req, res) => {
       }
     );
 
-    const vendorData = vendor.toObject();
-
-    delete vendorData.password;
-
     return res.status(200).json({
       success: true,
       token,
-      user: vendorData,
+      user: {
+        fullName: "Vendor",
+        role: "vendor",
+        mobile: req.body.mobile,
+      },
     });
 
   } catch (error) {
-
-    console.log(error);
 
     return res.status(500).json({
       success: false,

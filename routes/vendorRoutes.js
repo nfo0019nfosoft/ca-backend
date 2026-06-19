@@ -1,5 +1,5 @@
 console.log("✅ Vendor Routes Loaded");
-
+const Vendor = require("../models/Vendor");
 const express = require("express");
 const router = express.Router();
 const upload = require("../middleware/upload");
@@ -15,6 +15,7 @@ const {
   savePhoto,
   getAllVendors,
   getVendorById,
+  updateBankDetails,
 } = require("../controllers/vendorAuthController");
 
 /* -------------------------
@@ -97,6 +98,29 @@ router.post(
    GET ALL VENDORS
 ------------------------- */
 router.get("/", getAllVendors);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// =========================
+// update bank details
+// =========================
+router.put(
+  "/update-bank-details",
+  authMiddleware,
+  updateBankDetails
+);
+
 
 /* -------------------------
    GET SINGLE VENDOR

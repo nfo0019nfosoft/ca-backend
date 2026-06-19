@@ -113,9 +113,12 @@ officeCountryCode: {
 },
 
     // Services Offered
-  services: [
+ services: [
   {
-    serviceName: String,
+    serviceName: {
+      type: String,
+      required: true,
+    },
 
     pricingModel: String,
 
@@ -126,7 +129,6 @@ officeCountryCode: {
     description: String,
   },
 ],
-
     // Bank Details
     bankDetails: {
       accountHolderName: String,

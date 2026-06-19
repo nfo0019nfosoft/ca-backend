@@ -468,3 +468,45 @@ exports.getVendorById = async (
 
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+router.put(
+  "/update-bank-details",
+  authMiddleware,
+  async (req, res) => {
+
+    const vendor =
+      await Vendor.findByIdAndUpdate(
+        req.vendor.id,
+        {
+          bankDetails:
+            req.body.bankDetails,
+        },
+        { new: true }
+      );
+
+    res.json({
+      success: true,
+      vendor,
+    });
+
+  }
+);

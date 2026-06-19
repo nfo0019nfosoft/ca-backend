@@ -129,19 +129,42 @@ officeCountryCode: {
     description: String,
   },
 ],
-    // Bank Details
-    bankDetails: {
-      accountHolderName: String,
+bankDetails: {
+  accountHolderName: String,
 
-      bankName: String,
+  bankName: String,
 
-      accountNumber: String,
+  accountNumber: String,
 
-      ifscCode: String,
+  ifscCode: String,
 
-      upiId: String,
-    },
+  branchName: String,
 
+  accountType: {
+    type: String,
+    enum: [
+      "Savings Account",
+      "Current Account"
+    ],
+  },
+
+  upiId: String,
+
+  preferredPayoutMethod: {
+    type: String,
+    default: "NEFT / IMPS",
+  },
+
+  payoutFrequency: {
+    type: String,
+    default: "Weekly",
+  },
+
+  minimumPayoutThreshold: {
+    type: Number,
+    default: 1000,
+  },
+},
     // Availability
     available: {
       type: Boolean,

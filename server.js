@@ -65,6 +65,30 @@ app.use((err, req, res, next) => {
   });
 });
 
+
+
+const adminRoutes =
+require("./routes/adminRoutes");
+
+app.use(
+  "/api/admin",
+  adminRoutes
+);
+
+
+
+
+const enquiryRoutes =
+  require("./routes/enquiryRoutes");
+
+app.use(
+  "/api/enquiries",
+  enquiryRoutes
+);
+
+
+
+
 /* SERVER */
 const PORT =
   process.env.PORT || 5000;

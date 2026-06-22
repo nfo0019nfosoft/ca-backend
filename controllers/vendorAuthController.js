@@ -534,3 +534,51 @@ exports.updateBankDetails = async (
 
 
 
+
+
+
+
+
+// =========================
+// SEARCH VENDORS
+// =========================
+
+exports.searchVendors = async (req, res) => {
+  try {
+
+    const { service, city, businessType } = req.query;
+
+    let query = {};
+
+    if (service) {
+      query["services.serviceName"] = service;
+    }
+
+    if (city) {
+      query.city = {
+        $regex: city,
+        $options: "i"
+      };
+    }
+
+    if (businessType) {
+      query.businessType = {
+        $regex: businessType,
+        $options: "i"
+      };
+    }
+
+    const vendors = await Vendor.find(query)
+      .select("-password");
+
+    res.status(200).json(vendors);
+
+  } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+
+  }
+};

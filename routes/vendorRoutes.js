@@ -16,6 +16,7 @@ const {
   getAllVendors,
   getVendorById,
   updateBankDetails,
+  searchVendors
 } = require("../controllers/vendorAuthController");
 
 /* -------------------------
@@ -93,6 +94,16 @@ router.post(
   upload.single("photo"),
   savePhoto
 );
+
+
+
+/* -------------------------
+   SEARCH VENDORS
+------------------------- */
+
+router.get("/search", searchVendors);
+
+
 
 /* -------------------------
    GET ALL VENDORS

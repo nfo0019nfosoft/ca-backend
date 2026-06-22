@@ -103,6 +103,25 @@ officeCountryCode: {
 
     website: String,
 
+
+
+
+
+ services:[String],
+
+city:String,
+
+businessType:String,
+
+photo:String,
+
+fullName:String,
+
+firmName:String,
+
+experience:Number,
+
+
     // KYC Documents
  kyc:{
   panCard:String,
@@ -192,6 +211,21 @@ bankDetails: {
     timestamps: true,
   }
 );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 module.exports = mongoose.model(
   "Vendor",

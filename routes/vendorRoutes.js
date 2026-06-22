@@ -101,7 +101,48 @@ router.post(
    SEARCH VENDORS
 ------------------------- */
 
+router.get("/all-services", async (req, res) => {
+
+  try {
+
+    const vendors = await Vendor.find();
+
+    const services = [
+      ...new Set(
+        vendors.flatMap(v =>
+          v.services.map(s => s.serviceName)
+        )
+      )
+    ];
+
+    res.status(200).json(services);
+
+  } catch (err) {
+
+    res.status(500).json({
+      message: err.message
+    });
+
+  }
+
+});
+
+
+
+
+
+
+/* -------------------------
+   SEARCH VENDORS
+------------------------- */
 router.get("/search", searchVendors);
+
+
+
+
+
+
+
 
 
 

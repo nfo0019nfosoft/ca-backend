@@ -202,3 +202,79 @@ exports.getVendorStats = async (req, res) => {
   }
 
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.userStats = async (req, res) => {
+
+  try {
+
+    const totalUsers = await User.countDocuments();
+
+    const activeUsers = await User.countDocuments({
+      isBlocked: false
+    });
+
+    const blockedUsers = await User.countDocuments({
+      isBlocked: true
+    });
+
+    const verifiedUsers = await User.countDocuments({
+      isVerified: true
+    });
+
+    const newUsers = await User.countDocuments({
+      createdAt: {
+        $gte: new Date(
+          Date.now() - 7 * 24 * 60 * 60 * 1000
+        )
+      }
+    });
+
+    res.json({
+
+      success: true,
+
+      totalUsers,
+
+      activeUsers,
+
+      blockedUsers,
+
+      emailVerifiedUsers: verifiedUsers,
+
+      newUsers,
+
+      notificationCount: 16,
+
+      adminName: "Super Admin",
+
+      adminPhoto:
+        "https://i.pravatar.cc/100"
+
+    });
+
+  }
+
+  catch (err) {
+
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+
+  }
+
+};

@@ -14,7 +14,11 @@ const {
 
   getLeadStats,
 
-  getAllLeads
+  getAllLeads,
+
+  deleteUser,
+
+  deleteVendor
 
 } = require("../controllers/adminController");
 
@@ -57,6 +61,35 @@ router.get(
   "/users",
   getAllUsers
 );
+
+
+
+
+
+
+
+// =====================
+// DELETE USER
+// =====================
+
+
+router.delete(
+  "/users/:id",
+  deleteUser
+);
+
+
+
+// =====================
+// DELETE VENDOR
+// =====================
+
+
+router.delete(
+  "/vendors/:id",
+  deleteVendor
+);
+
 
 
 // =====================

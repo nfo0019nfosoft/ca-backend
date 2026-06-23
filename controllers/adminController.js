@@ -478,3 +478,102 @@ exports.getAllLeads = async (req, res) => {
   }
 
 };
+
+
+
+
+
+
+
+
+
+
+
+
+// =====================
+// DELETE USER
+// =====================
+
+exports.deleteUser = async (req, res) => {
+
+  try {
+
+    await User.findByIdAndDelete(
+      req.params.id
+    );
+
+    res.status(200).json({
+
+      success: true,
+
+      message: "User deleted successfully"
+
+    });
+
+  }
+
+  catch (err) {
+
+    res.status(500).json({
+
+      success: false,
+
+      message: err.message
+
+    });
+
+  }
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+// =====================
+// DELETE VENDOR
+// =====================
+
+exports.deleteVendor = async (
+  req,
+  res
+) => {
+
+  try {
+
+    await Vendor.findByIdAndDelete(
+      req.params.id
+    );
+
+    res.status(200).json({
+
+      success: true,
+
+      message:
+        "Vendor deleted successfully"
+
+    });
+
+  }
+
+  catch (err) {
+
+    res.status(500).json({
+
+      success: false,
+
+      message: err.message
+
+    });
+
+  }
+
+};

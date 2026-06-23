@@ -90,7 +90,9 @@ app.use(
 
 
 
+const blogRoutes = require("./routes/blogRoutes");
 
+app.use("/api/blogs", blogRoutes);
 
 
 

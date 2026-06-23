@@ -1,10 +1,13 @@
 const jwt = require("jsonwebtoken");
-const Vendor = require("../models/Vendor");
 
+const Vendor = require("../models/Vendor");
+const User = require("../models/User");
+const Lead = require("../models/Lead");
 
 // =====================
 // ADMIN LOGIN
 // =====================
+
 exports.adminLogin = async (req, res) => {
 
   try {
@@ -34,9 +37,11 @@ exports.adminLogin = async (req, res) => {
     );
 
     res.status(200).json({
+
       success: true,
       token,
       role: "admin"
+
     });
 
   }
@@ -44,8 +49,10 @@ exports.adminLogin = async (req, res) => {
   catch (err) {
 
     res.status(500).json({
+
       success: false,
       message: err.message
+
     });
 
   }
@@ -56,11 +63,10 @@ exports.adminLogin = async (req, res) => {
 // =====================
 // VENDOR STATS
 // =====================
+
 exports.getVendorStats = async (req, res) => {
 
   try {
-
-    // Dashboard Cards
 
     const totalVendors = await Vendor.countDocuments();
 
@@ -87,13 +93,16 @@ exports.getVendorStats = async (req, res) => {
     });
 
 
-    // Chart Data (Last 7 Days)
-
     let chartLabels = [];
+
     let totalVendorChart = [];
+
     let activeVendorChart = [];
+
     let pendingVendorChart = [];
+
     let blockedVendorChart = [];
+
 
     for (let i = 6; i >= 0; i--) {
 
@@ -123,9 +132,13 @@ exports.getVendorStats = async (req, res) => {
       totalVendorChart.push(
 
         await Vendor.countDocuments({
+
           createdAt: {
+
             $lte: end
+
           }
+
         })
 
       );
@@ -134,10 +147,15 @@ exports.getVendorStats = async (req, res) => {
       activeVendorChart.push(
 
         await Vendor.countDocuments({
+
           available: true,
+
           createdAt: {
+
             $lte: end
+
           }
+
         })
 
       );
@@ -146,10 +164,15 @@ exports.getVendorStats = async (req, res) => {
       pendingVendorChart.push(
 
         await Vendor.countDocuments({
+
           isVerified: false,
+
           createdAt: {
+
             $lte: end
+
           }
+
         })
 
       );
@@ -158,10 +181,15 @@ exports.getVendorStats = async (req, res) => {
       blockedVendorChart.push(
 
         await Vendor.countDocuments({
+
           available: false,
+
           createdAt: {
+
             $lte: end
+
           }
+
         })
 
       );
@@ -174,16 +202,25 @@ exports.getVendorStats = async (req, res) => {
       success: true,
 
       totalVendors,
+
       activeVendors,
+
       pendingApproval,
+
       blockedVendors,
+
       verifiedVendors,
+
       experiencedVendors,
 
       chartLabels,
+
       totalVendorChart,
+
       activeVendorChart,
+
       pendingVendorChart,
+
       blockedVendorChart
 
     });
@@ -195,6 +232,7 @@ exports.getVendorStats = async (req, res) => {
     res.status(500).json({
 
       success: false,
+
       message: err.message
 
     });
@@ -206,16 +244,9 @@ exports.getVendorStats = async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
+// =====================
+// USER STATS
+// =====================
 
 exports.userStats = async (req, res) => {
 
@@ -224,15 +255,15 @@ exports.userStats = async (req, res) => {
     const totalUsers = await User.countDocuments();
 
     const activeUsers = await User.countDocuments({
-      isBlocked: false
+      accountStatus: "active"
     });
 
-    const blockedUsers = await User.countDocuments({
-      isBlocked: true
+    const suspendedUsers = await User.countDocuments({
+      accountStatus: "suspended"
     });
 
     const verifiedUsers = await User.countDocuments({
-      isVerified: true
+      emailVerified: true
     });
 
     const newUsers = await User.countDocuments({
@@ -243,7 +274,21 @@ exports.userStats = async (req, res) => {
       }
     });
 
-    res.json({
+    const unreadNotifications = await User.aggregate([
+      {
+        $unwind: "$notifications"
+      },
+      {
+        $match: {
+          "notifications.isRead": false
+        }
+      },
+      {
+        $count: "count"
+      }
+    ]);
+
+    res.status(200).json({
 
       success: true,
 
@@ -251,18 +296,20 @@ exports.userStats = async (req, res) => {
 
       activeUsers,
 
-      blockedUsers,
+      suspendedUsers,
 
       emailVerifiedUsers: verifiedUsers,
 
       newUsers,
 
-      notificationCount: 16,
+      notificationCount:
+        unreadNotifications.length > 0
+          ? unreadNotifications[0].count
+          : 0,
 
       adminName: "Super Admin",
 
-      adminPhoto:
-        "https://i.pravatar.cc/100"
+      adminPhoto: "/images/avatar.png"
 
     });
 
@@ -271,8 +318,161 @@ exports.userStats = async (req, res) => {
   catch (err) {
 
     res.status(500).json({
+
       success: false,
+
       message: err.message
+
+    });
+
+  }
+
+};
+
+
+// =====================
+// ALL USERS
+// =====================
+
+exports.getAllUsers = async (req, res) => {
+
+  try {
+
+    const users = await User.find()
+      .sort({
+        createdAt: -1
+      });
+
+    res.status(200).json({
+
+      success: true,
+
+      users
+
+    });
+
+  }
+
+  catch (err) {
+
+    res.status(500).json({
+
+      success: false,
+
+      message: err.message
+
+    });
+
+  }
+
+};
+
+
+
+// =====================
+// LEAD STATS
+// =====================
+
+exports.getLeadStats = async (req, res) => {
+
+  try {
+
+    const totalLeads = await Lead.countDocuments();
+
+    const newLeads = await Lead.countDocuments({
+      status: "new"
+    });
+
+    const assignedLeads = await Lead.countDocuments({
+      status: "assigned"
+    });
+
+    const inProgressLeads = await Lead.countDocuments({
+      status: "in_progress"
+    });
+
+    const convertedLeads = await Lead.countDocuments({
+      status: "converted"
+    });
+
+    const closedLeads = await Lead.countDocuments({
+      status: "closed"
+    });
+
+    const cancelledLeads = await Lead.countDocuments({
+      status: "cancelled"
+    });
+
+    res.status(200).json({
+
+      success: true,
+
+      totalLeads,
+
+      newLeads,
+
+      assignedLeads,
+
+      inProgressLeads,
+
+      convertedLeads,
+
+      closedLeads,
+
+      cancelledLeads
+
+    });
+
+  }
+
+  catch (err) {
+
+    res.status(500).json({
+
+      success: false,
+
+      message: err.message
+
+    });
+
+  }
+
+};
+
+
+// =====================
+// ALL LEADS
+// =====================
+
+exports.getAllLeads = async (req, res) => {
+
+  try {
+
+    const leads = await Lead.find()
+      .populate("userId", "name email phone")
+      .populate("vendorId", "fullName email mobile")
+      .sort({
+        createdAt: -1
+      });
+
+    res.status(200).json({
+
+      success: true,
+
+      leads
+
+    });
+
+  }
+
+  catch (err) {
+
+    res.status(500).json({
+
+      success: false,
+
+      message: err.message
+
     });
 
   }

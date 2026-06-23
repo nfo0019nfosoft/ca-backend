@@ -1,231 +1,253 @@
 const mongoose = require("mongoose");
 
 const vendorSchema = new mongoose.Schema(
-  {
-    // Login Details
-    fullName: {
-      type: String,
-      required: true,
-    },
+{
+  // ======================
+  // LOGIN DETAILS
+  // ======================
 
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-
-    mobile: {
-      type: String,
-      required: true,
-    },
-
-    password: {
-      type: String,
-      required: true,
-    },
-
-    role: {
-      type: String,
-      default: "vendor",
-    },
-
-    // Individual / Firm
-    profileType: {
-  type: String,
-  enum: ["individual", "firm"],
-  default: "individual",
-},
-
-countryCode: {
-  type: String,
-  default: "+91",
-},
-
-officeCountryCode: {
-  type: String,
-  default: "+91",
-},
-    // Profile
-    photo: {
-      type: String,
-      default: "",
-    },
-
-    qualification: String,
-
-    experience: {
-      type: Number,
-      default: 0,
-    },
-
-    designation: String,
-
-    about: String,
-
-    // Individual CA Details
-    caNumber: String,
-
-    membershipNumber: String,
-
-    contactNumber: String,
-
-    // Address
-    addressLine1: String,
-
-    addressLine2: String,
-
-    city: String,
-
-    state: String,
-
-    country: String,
-
-    pincode: String,
-
-    landmark: String,
-
-    // Firm Details
-    firmName: String,
-
-    firmType: String,
-
-    firmRegistrationNo: String,
-
-    establishedOn: Date,
-
-    gstNumber: String,
-
-    panNumber: String,
-
-    officeEmail: String,
-
-    officeMobile: String,
-
-    website: String,
-
-
-
-
-
- services:[String],
-
-city:String,
-
-businessType:String,
-
-photo:String,
-
-fullName:String,
-
-firmName:String,
-
-experience:Number,
-
-
-    // KYC Documents
- kyc:{
-  panCard:String,
-  aadhaarCard:String,
-  photograph:String,
-  addressProof:String,
-  caCertificate:String
-},
-
-    // Services Offered
- services: [
-  {
-    serviceName: {
-      type: String,
-      required: true,
-    },
-
-    pricingModel: String,
-
-    price: Number,
-
-    deliveryTime: String,
-
-    description: String,
-  },
-],
-bankDetails: {
-  accountHolderName: String,
-
-  bankName: String,
-
-  accountNumber: String,
-
-  ifscCode: String,
-
-  branchName: String,
-
-  accountType: {
+  fullName: {
     type: String,
-    enum: [
-      "Savings Account",
-      "Current Account"
-    ],
+    required: true
   },
 
-  upiId: String,
-
-  preferredPayoutMethod: {
+  email: {
     type: String,
-    default: "NEFT / IMPS",
+    required: true,
+    unique: true
   },
 
-  payoutFrequency: {
+  mobile: {
     type: String,
-    default: "Weekly",
+    required: true
   },
 
-  minimumPayoutThreshold: {
+  password: {
+    type: String,
+    required: true
+  },
+
+  role: {
+    type: String,
+    default: "vendor"
+  },
+
+  profileType: {
+    type: String,
+    enum: ["individual", "firm"],
+    default: "individual"
+  },
+
+  countryCode: {
+    type: String,
+    default: "+91"
+  },
+
+  officeCountryCode: {
+    type: String,
+    default: "+91"
+  },
+
+  // ======================
+  // PROFILE
+  // ======================
+
+  photo: {
+    type: String,
+    default: ""
+  },
+
+  qualification: String,
+
+  experience: {
     type: Number,
-    default: 1000,
+    default: 0
   },
-},
-    // Availability
-    available: {
-      type: Boolean,
-      default: true,
+
+  designation: String,
+
+  about: String,
+
+  businessType: String,
+
+  // ======================
+  // CA DETAILS
+  // ======================
+
+  caNumber: String,
+
+  membershipNumber: String,
+
+  contactNumber: String,
+
+  // ======================
+  // ADDRESS
+  // ======================
+
+  addressLine1: String,
+
+  addressLine2: String,
+
+  city: String,
+
+  state: String,
+
+  country: String,
+
+  pincode: String,
+
+  landmark: String,
+
+  // ======================
+  // FIRM DETAILS
+  // ======================
+
+  firmName: String,
+
+  firmType: String,
+
+  firmRegistrationNo: String,
+
+  establishedOn: Date,
+
+  gstNumber: String,
+
+  panNumber: String,
+
+  officeEmail: String,
+
+  officeMobile: String,
+
+  website: String,
+
+  // ======================
+  // KYC
+  // ======================
+
+  kyc: {
+
+    panCard: String,
+
+    aadhaarCard: String,
+
+    photograph: String,
+
+    addressProof: String,
+
+    caCertificate: String
+
+  },
+
+  // ======================
+  // SERVICES
+  // ======================
+
+  services: [
+
+    {
+
+      serviceName: {
+        type: String,
+        required: true
+      },
+
+      pricingModel: String,
+
+      price: Number,
+
+      deliveryTime: String,
+
+      description: String
+
+    }
+
+  ],
+
+  // ======================
+  // BANK DETAILS
+  // ======================
+
+  bankDetails: {
+
+    accountHolderName: String,
+
+    bankName: String,
+
+    accountNumber: String,
+
+    ifscCode: String,
+
+    branchName: String,
+
+    accountType: {
+      type: String,
+      enum: ["Savings Account", "Current Account"]
     },
 
-    workingDays: [String],
+    upiId: String,
 
-    workingHours: String,
-
-    communicationModes: [String],
-
-    // Verification
-    isVerified: {
-      type: Boolean,
-      default: false,
+    preferredPayoutMethod: {
+      type: String,
+      default: "NEFT / IMPS"
     },
 
-    profileCompletion: {
+    payoutFrequency: {
+      type: String,
+      default: "Weekly"
+    },
+
+    minimumPayoutThreshold: {
       type: Number,
-      default: 0,
-    },
+      default: 1000
+    }
+
   },
-  {
-    timestamps: true,
+
+  // ======================
+  // AVAILABILITY
+  // ======================
+
+  available: {
+    type: Boolean,
+    default: true
+  },
+
+  workingDays: [String],
+
+  workingHours: String,
+
+  communicationModes: [String],
+
+  // ======================
+  // STATUS
+  // ======================
+
+  status: {
+    type: String,
+    enum: ["Active", "Pending", "Blocked"],
+    default: "Pending"
+  },
+
+  // ======================
+  // VERIFICATION
+  // ======================
+
+  isVerified: {
+    type: Boolean,
+    default: false
+  },
+
+  profileCompletion: {
+    type: Number,
+    default: 0
   }
+
+},
+{
+  timestamps: true
+}
+
 );
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module.exports = mongoose.model(
   "Vendor",

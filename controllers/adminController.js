@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const Vendor = require("../models/Vendor");
 
+
 // =====================
 // ADMIN LOGIN
 // =====================
@@ -32,7 +33,7 @@ exports.adminLogin = async (req, res) => {
       }
     );
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       token,
       role: "admin"
@@ -40,11 +41,11 @@ exports.adminLogin = async (req, res) => {
 
   }
 
-  catch (error) {
+  catch (err) {
 
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
-      message: error.message
+      message: err.message
     });
 
   }
@@ -59,44 +60,132 @@ exports.getVendorStats = async (req, res) => {
 
   try {
 
-    const totalVendors =
-      await Vendor.countDocuments();
+    // Dashboard Cards
 
-    const activeVendors =
-      await Vendor.countDocuments({
-        available: true
-      });
+    const totalVendors = await Vendor.countDocuments();
 
-    const pendingApproval =
-      await Vendor.countDocuments({
-        isVerified: false
-      });
+    const activeVendors = await Vendor.countDocuments({
+      available: true
+    });
 
-    const blockedVendors =
-      await Vendor.countDocuments({
-        available: false
-      });
+    const pendingApproval = await Vendor.countDocuments({
+      isVerified: false
+    });
 
-    const verifiedVendors =
-      await Vendor.countDocuments({
-        isVerified: true
-      });
+    const blockedVendors = await Vendor.countDocuments({
+      available: false
+    });
 
-    const experiencedVendors =
-      await Vendor.countDocuments({
-        experience: {
-          $gte: 5
-        }
-      });
+    const verifiedVendors = await Vendor.countDocuments({
+      isVerified: true
+    });
+
+    const experiencedVendors = await Vendor.countDocuments({
+      experience: {
+        $gte: 5
+      }
+    });
+
+
+    // Chart Data (Last 7 Days)
+
+    let chartLabels = [];
+    let totalVendorChart = [];
+    let activeVendorChart = [];
+    let pendingVendorChart = [];
+    let blockedVendorChart = [];
+
+    for (let i = 6; i >= 0; i--) {
+
+      const start = new Date();
+
+      start.setDate(start.getDate() - i);
+
+      start.setHours(0, 0, 0, 0);
+
+      const end = new Date(start);
+
+      end.setHours(23, 59, 59, 999);
+
+      chartLabels.push(
+
+        start.toLocaleDateString(
+          "en-US",
+          {
+            month: "short",
+            day: "numeric"
+          }
+        )
+
+      );
+
+
+      totalVendorChart.push(
+
+        await Vendor.countDocuments({
+          createdAt: {
+            $lte: end
+          }
+        })
+
+      );
+
+
+      activeVendorChart.push(
+
+        await Vendor.countDocuments({
+          available: true,
+          createdAt: {
+            $lte: end
+          }
+        })
+
+      );
+
+
+      pendingVendorChart.push(
+
+        await Vendor.countDocuments({
+          isVerified: false,
+          createdAt: {
+            $lte: end
+          }
+        })
+
+      );
+
+
+      blockedVendorChart.push(
+
+        await Vendor.countDocuments({
+          available: false,
+          createdAt: {
+            $lte: end
+          }
+        })
+
+      );
+
+    }
+
 
     res.status(200).json({
+
       success: true,
+
       totalVendors,
       activeVendors,
       pendingApproval,
       blockedVendors,
       verifiedVendors,
-      experiencedVendors
+      experiencedVendors,
+
+      chartLabels,
+      totalVendorChart,
+      activeVendorChart,
+      pendingVendorChart,
+      blockedVendorChart
+
     });
 
   }
@@ -104,8 +193,10 @@ exports.getVendorStats = async (req, res) => {
   catch (err) {
 
     res.status(500).json({
+
       success: false,
       message: err.message
+
     });
 
   }

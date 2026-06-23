@@ -388,33 +388,44 @@ exports.savePhoto = async (
 // =========================
 // GET ALL VENDORS
 // =========================
+// =========================
+// GET ALL VENDORS
+// =========================
 exports.getAllVendors = async (
   req,
   res
 ) => {
+
   try {
 
-    const vendors =
-      await Vendor.find()
+    const vendors = await Vendor.find()
       .select("-password");
 
-    return res.status(200).json(
-      vendors
-    );
+    return res.status(200).json({
 
-  } catch (error) {
+      success: true,
+
+      vendors
+
+    });
+
+  }
+
+  catch (error) {
 
     console.log(error);
 
     return res.status(500).json({
+
       success: false,
-      message: error.message,
+
+      message: error.message
+
     });
 
   }
+
 };
-
-
 
 
 

@@ -102,4 +102,16 @@ router.get(
 );
 
 
+
+
+// =====================
+//  DELETE LEADS
+// =====================
+
+router.delete(
+  "/leads/:id",
+  deleteLead
+);
+
+
 module.exports = router;

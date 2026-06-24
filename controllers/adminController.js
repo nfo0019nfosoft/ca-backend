@@ -594,3 +594,41 @@ exports.getAllLeads = async (req, res) => {
   }
 
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.deleteLead = async (req,res)=>{
+
+  try{
+
+    await Enquiry.findByIdAndDelete(
+      req.params.id
+    );
+
+    res.status(200).json({
+      success:true,
+      message:"Lead deleted successfully"
+    });
+
+  }
+
+  catch(err){
+
+    res.status(500).json({
+      success:false,
+      message:err.message
+    });
+
+  }
+
+};

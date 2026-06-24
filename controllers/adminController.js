@@ -440,49 +440,6 @@ exports.getLeadStats = async (req, res) => {
 };
 
 
-// =====================
-// ALL LEADS
-// =====================
-
-exports.getAllLeads = async (req, res) => {
-
-  try {
-
-    const leads = await Lead.find()
-      .populate("userId", "name email phone")
-      .populate("vendorId", "fullName email mobile")
-      .sort({
-        createdAt: -1
-      });
-
-    res.status(200).json({
-
-      success: true,
-
-      leads
-
-    });
-
-  }
-
-  catch (err) {
-
-    res.status(500).json({
-
-      success: false,
-
-      message: err.message
-
-    });
-
-  }
-
-};
-
-
-
-
-
 
 
 
@@ -576,4 +533,49 @@ exports.deleteVendor = async (
 
   }
 
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// =====================
+// ENQUIRY
+// =====================
+
+
+
+const Enquiry = require("../models/Enquiry");
+
+exports.getAllLeads = async (req, res) => {
+  try {
+
+    const enquiries = await Enquiry.find()
+      .populate("vendorId", "fullName")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      enquiries
+    });
+
+  } catch (err) {
+
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+
+  }
 };

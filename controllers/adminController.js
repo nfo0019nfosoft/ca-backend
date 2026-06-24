@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const Vendor = require("../models/Vendor");
 const User = require("../models/User");
-const Lead = require("../models/Lead");
+const Enquiry = require("../models/Enquiry");
 
 // =====================
 // ADMIN LOGIN
@@ -377,30 +377,26 @@ exports.getLeadStats = async (req, res) => {
 
   try {
 
-    const totalLeads = await Lead.countDocuments();
+    const totalLeads = await Enquiry.countDocuments();
 
-    const newLeads = await Lead.countDocuments({
+    const newLeads = await Enquiry.countDocuments({
       status: "new"
     });
 
-    const assignedLeads = await Lead.countDocuments({
-      status: "assigned"
+    const contactedLeads = await Enquiry.countDocuments({
+      status: "contacted"
     });
 
-    const inProgressLeads = await Lead.countDocuments({
-      status: "in_progress"
+    const qualifiedLeads = await Enquiry.countDocuments({
+      status: "qualified"
     });
 
-    const convertedLeads = await Lead.countDocuments({
+    const convertedLeads = await Enquiry.countDocuments({
       status: "converted"
     });
 
-    const closedLeads = await Lead.countDocuments({
-      status: "closed"
-    });
-
-    const cancelledLeads = await Lead.countDocuments({
-      status: "cancelled"
+    const lostLeads = await Enquiry.countDocuments({
+      status: "lost"
     });
 
     res.status(200).json({
@@ -411,15 +407,13 @@ exports.getLeadStats = async (req, res) => {
 
       newLeads,
 
-      assignedLeads,
+      contactedLeads,
 
-      inProgressLeads,
+      qualifiedLeads,
 
       convertedLeads,
 
-      closedLeads,
-
-      cancelledLeads
+      lostLeads
 
     });
 
@@ -438,7 +432,6 @@ exports.getLeadStats = async (req, res) => {
   }
 
 };
-
 
 
 
@@ -556,26 +549,48 @@ exports.deleteVendor = async (
 
 
 
-const Enquiry = require("../models/Enquiry");
+
 
 exports.getAllLeads = async (req, res) => {
+
   try {
 
     const enquiries = await Enquiry.find()
-      .populate("vendorId", "fullName")
-      .sort({ createdAt: -1 });
+
+      .populate(
+        "vendorId",
+        "fullName"
+      )
+
+      .populate(
+        "userId",
+        "fullName email mobile businessName country"
+      )
+
+      .sort({
+        createdAt: -1
+      });
 
     res.status(200).json({
+
       success: true,
+
       enquiries
-    });
 
-  } catch (err) {
-
-    res.status(500).json({
-      success: false,
-      message: err.message
     });
 
   }
+
+  catch (err) {
+
+    res.status(500).json({
+
+      success: false,
+
+      message: err.message
+
+    });
+
+  }
+
 };

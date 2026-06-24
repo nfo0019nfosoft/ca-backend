@@ -1,36 +1,64 @@
 const mongoose = require("mongoose");
 
 const enquirySchema = new mongoose.Schema(
-  {
-    vendorId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Vendor",
-      required: true,
-    },
-
-    serviceName: [String],
-
-    fullName: String,
-    email: String,
-    mobile: String,
-
-    preferredContact: String,
-    preferredTime: String,
-
-    businessType: String,
-    annualTurnover: String,
-    businessStructure: String,
-    panNumber: String,
-
-    requirements: String,
-
-    status: {
-      type: String,
-      default: "new",
-    },
+{
+  vendorId:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"Vendor",
+    required:true
   },
-  { timestamps: true }
-);
+
+  userId:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"User",
+    required:true
+  },
+
+  serviceName:[String],
+
+  fullName:String,
+  email:String,
+  mobile:String,
+
+  companyName:String,
+
+  source:{
+    type:String,
+    default:"Website"
+  },
+
+  region:{
+    type:String,
+    default:"India"
+  },
+
+  preferredContact:String,
+  preferredTime:String,
+
+  businessType:String,
+  annualTurnover:String,
+  businessStructure:String,
+  panNumber:String,
+
+  requirements:String,
+
+  status:{
+    type:String,
+    enum:[
+      "new",
+      "contacted",
+      "qualified",
+      "proposal_sent",
+      "converted",
+      "lost"
+    ],
+    default:"new"
+  }
+
+},
+{
+  timestamps:true
+});
 
 module.exports = mongoose.model(
   "Enquiry",

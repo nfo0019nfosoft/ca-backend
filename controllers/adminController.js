@@ -632,3 +632,54 @@ exports.deleteLead = async (req,res)=>{
   }
 
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const Blog = require("../models/Blog");
+
+
+// =====================
+// ALL BLOGS
+// =====================
+
+exports.getAllBlogs = async (req, res) => {
+
+  try {
+
+    const blogs = await Blog.find()
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+
+      success: true,
+      totalBlogs: blogs.length,
+      blogs
+
+    });
+
+  }
+
+  catch (err) {
+
+    res.status(500).json({
+
+      success: false,
+      message: err.message
+
+    });
+
+  }
+
+};

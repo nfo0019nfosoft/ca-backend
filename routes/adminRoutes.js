@@ -18,7 +18,12 @@ const {
 
   deleteUser,
 
-  deleteVendor
+  deleteVendor,
+
+  deleteLead,
+
+  getAllBlogs
+
 
 } = require("../controllers/adminController");
 
@@ -113,5 +118,23 @@ router.delete(
   deleteLead
 );
 
+
+
+
+
+
+
+
+
+
+
+// =====================
+// BLOGS
+// =====================
+
+router.get(
+  "/blogs",
+  getAllBlogs
+);
 
 module.exports = router;

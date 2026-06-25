@@ -321,6 +321,32 @@ verificationCompleted: {
       },
     ],
 
+
+
+
+
+
+recentViewed: [
+  {
+    vendor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Vendor",
+    },
+    viewedAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+],
+
+
+
+
+
+
+
+
+
     // ======================
     // ACCOUNT STATUS
     // ======================

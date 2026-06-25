@@ -60,9 +60,44 @@ const blogSchema = new mongoose.Schema(
       }
     ],
 
+    metaDescription: {
+      type: String
+    },
+
+    focusKeyword: {
+      type: String
+    },
+
+    status: {
+      type: String,
+      enum: ["Draft", "Published", "Archived"],
+      default: "Draft"
+    },
+
+    visibility: {
+      type: String,
+      enum: ["Public", "Private"],
+      default: "Public"
+    },
+
+    allowComments: {
+      type: Boolean,
+      default: true
+    },
+
     featured: {
       type: Boolean,
       default: false
+    },
+
+    views: {
+      type: Number,
+      default: 0
+    },
+
+    likes: {
+      type: Number,
+      default: 0
     }
 
   },

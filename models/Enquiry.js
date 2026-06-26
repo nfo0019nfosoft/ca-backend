@@ -43,6 +43,24 @@ budget:String,
 timeline:String,
   requirements:String,
 
+
+gstRequired: {
+  type: String,
+  default: ""
+},
+
+hearAboutUs: {
+  type: String,
+  default: ""
+},
+
+
+
+
+
+
+
+
   status:{
     type:String,
     enum:[

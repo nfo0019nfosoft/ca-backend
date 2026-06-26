@@ -9,7 +9,6 @@ const {
 } = require("../controllers/recentController");
 
 router.post("/view", auth, addRecentView);
-
 router.get("/", auth, getRecentViewed);
 
 module.exports = router;

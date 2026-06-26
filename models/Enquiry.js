@@ -39,7 +39,8 @@ const enquirySchema = new mongoose.Schema(
   annualTurnover:String,
   businessStructure:String,
   panNumber:String,
-
+budget:String,
+timeline:String,
   requirements:String,
 
   status:{

@@ -1,4 +1,4 @@
-const Compare = require("../models/Compare");
+const Compare = require("../models/compare");
 
 exports.addToCompare = async (req, res) => {
   try {

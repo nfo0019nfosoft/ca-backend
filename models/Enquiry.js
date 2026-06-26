@@ -69,6 +69,24 @@ state: {
   default: ""
 },
 
+documents: [
+  {
+    fileName: String,
+    fileUrl: String,
+    uploadedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }
+],
+
+
+
+
+notes: {
+  type: String,
+  default: ""
+},
 
 
 

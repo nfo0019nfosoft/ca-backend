@@ -7,60 +7,94 @@ const Enquiry = require("../models/Enquiry");
       CREATE ENQUIRY
 =========================== */
 
-router.post("/", async (req, res) => {
-  try {
+const upload = require("../middleware/upload");
 
-    console.log("ENQUIRY BODY =", req.body);
+router.post(
+  "/",
+  upload.array("documents", 10),
+  async (req, res) => {
 
-    const enquiry = await Enquiry.create({
-      vendorId: req.body.vendorId,
-      userId: req.body.userId,
+    try {
 
-      serviceName: req.body.serviceName,
+      console.log(req.body);
+      console.log(req.files);
 
-      fullName: req.body.fullName,
-      email: req.body.email,
-      mobile: req.body.mobile,
+      const documents =
+        req.files?.map(file => ({
+          fileName: file.originalname,
+          fileUrl: file.filename
+        })) || [];
 
-      // NEW FIELDS
-      city: req.body.city,
-      state: req.body.state,
-      gstRequired: req.body.gstRequired,
-      hearAboutUs: req.body.hearAboutUs,
+      const enquiry =
+        await Enquiry.create({
 
-      companyName: req.body.companyName,
+          vendorId: req.body.vendorId,
+          userId: req.body.userId,
 
-      preferredContact: req.body.preferredContact,
-      preferredTime: req.body.preferredTime,
+          serviceName: req.body.serviceName,
 
-      businessType: req.body.businessType,
-      annualTurnover: req.body.annualTurnover,
-      businessStructure: req.body.businessStructure,
+          fullName: req.body.fullName,
+          email: req.body.email,
+          mobile: req.body.mobile,
 
-      panNumber: req.body.panNumber,
-      budget: req.body.budget,
-      timeline: req.body.timeline,
-      requirements: req.body.requirements,
+          city: req.body.city,
+          state: req.body.state,
 
-      source: "Website",
-      region: "India",
-    });
+          gstRequired: req.body.gstRequired,
+          hearAboutUs: req.body.hearAboutUs,
 
-    res.status(201).json({
-      success: true,
-      enquiry,
-    });
+          companyName: req.body.companyName,
 
-  } catch (err) {
+          preferredContact:
+            req.body.preferredContact,
 
-    console.log(err);
+          preferredTime:
+            req.body.preferredTime,
 
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+          businessType:
+            req.body.businessType,
 
-  }
+          annualTurnover:
+            req.body.annualTurnover,
+
+          businessStructure:
+            req.body.businessStructure,
+
+          panNumber:
+            req.body.panNumber,
+
+          budget:
+            req.body.budget,
+
+          timeline:
+            req.body.timeline,
+
+          requirements:
+            req.body.requirements,
+
+          documents,
+
+          source: "Website",
+          region: "India"
+
+        });
+
+      res.status(201).json({
+        success: true,
+        enquiry
+      });
+
+    } catch (err) {
+
+      console.log(err);
+
+      res.status(500).json({
+        success: false,
+        message: err.message
+      });
+
+    }
+
 });
 
 /* ===========================
@@ -160,5 +194,53 @@ router.get("/:id", async (req, res) => {
 
   }
 });
+
+
+
+
+
+
+
+
+router.put(
+  "/:id/notes",
+  async (req, res) => {
+    try {
+
+      const enquiry =
+        await Enquiry.findByIdAndUpdate(
+          req.params.id,
+          {
+            notes: req.body.notes
+          },
+          {
+            new: true
+          }
+        );
+
+      res.status(200).json({
+        success: true,
+        enquiry
+      });
+
+    } catch (err) {
+
+      res.status(500).json({
+        success: false,
+        message: err.message
+      });
+
+    }
+  }
+);
+
+
+
+
+
+
+
+
+
 
 module.exports = router;

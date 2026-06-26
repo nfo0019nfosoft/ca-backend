@@ -53,9 +53,21 @@ hearAboutUs: {
   type: String,
   default: ""
 },
+location: {
+  type: String,
+  default: ""
+},
 
 
+city: {
+  type: String,
+  default: ""
+},
 
+state: {
+  type: String,
+  default: ""
+},
 
 
 

@@ -22,6 +22,12 @@ router.post("/", async (req, res) => {
       email: req.body.email,
       mobile: req.body.mobile,
 
+      // NEW FIELDS
+      city: req.body.city,
+      state: req.body.state,
+      gstRequired: req.body.gstRequired,
+      hearAboutUs: req.body.hearAboutUs,
+
       companyName: req.body.companyName,
 
       preferredContact: req.body.preferredContact,

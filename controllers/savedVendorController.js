@@ -51,16 +51,28 @@ exports.saveVendor = async (req, res) => {
 exports.getSavedVendors = async (req, res) => {
   try {
 
-    console.log("Logged User:", req.user.id);
+    console.log("REQ USER =>", req.user);
 
-    const saved = await SavedVendor.find()
-      .populate("vendorId");
+    console.log(
+      "FETCHING FOR USER ID =>",
+      req.user.id
+    );
 
-    console.log(saved);
+    const saved =
+      await SavedVendor.find({
+        userId: req.user.id
+      }).populate("vendorId");
+
+    console.log(
+      "RESULT =>",
+      saved
+    );
 
     res.json({
       success: true,
-      savedCAs: saved.map(item => item.vendorId),
+      savedCAs: saved.map(
+        item => item.vendorId
+      ),
     });
 
   } catch (err) {

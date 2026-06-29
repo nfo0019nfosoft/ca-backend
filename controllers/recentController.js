@@ -42,17 +42,43 @@ exports.addRecentView = async (req, res) => {
   }
 };
 
+
+
+
+
+
+
 exports.getRecentViewed = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id)
+
+    console.log("REQ.USER =>", req.user);
+
+    const userId =
+      req.user.id ||
+      req.user.userId ||
+      req.user._id;
+
+    console.log("USER ID =>", userId);
+
+    const user = await User.findById(userId)
       .populate("recentViewed.vendor");
 
-    res.status(200).json(user.recentViewed);
+    console.log("FOUND USER =>", user);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json(user.recentViewed || []);
 
   } catch (err) {
     console.log(err);
 
     res.status(500).json({
+      success: false,
       message: err.message,
     });
   }

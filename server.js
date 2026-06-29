@@ -18,6 +18,8 @@ const blogRoutes = require("./routes/blogRoutes");
 const savedRoutes = require("./routes/savedRoutes");
 const recentRoutes = require("./routes/recentRoutes");
 const compareRoutes = require("./routes/compareRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
+const consultationRoutes = require("./routes/consultationRoutes");
 
 const app = express();
 
@@ -92,6 +94,12 @@ app.get("/", (req, res) => {
 
 app.use("/api/recent", recentRoutes);
 app.use("/api/compare", compareRoutes);
+
+
+
+
+app.use( "/api/payment", paymentRoutes);
+app.use("/api/consultations", consultationRoutes );
 
 // ======================
 // 404 ROUTE

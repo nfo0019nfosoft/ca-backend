@@ -1,22 +1,26 @@
 const mongoose = require("mongoose");
 
-const consultationSchema = new mongoose.Schema(
+const consultationSchema =
+new mongoose.Schema(
   {
     // Relations
     userId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type:
+        mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
 
     vendorId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type:
+        mongoose.Schema.Types.ObjectId,
       ref: "Vendor",
       required: true,
     },
 
     leadId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type:
+        mongoose.Schema.Types.ObjectId,
       ref: "Lead",
     },
 
@@ -45,7 +49,11 @@ const consultationSchema = new mongoose.Schema(
     // Meeting Mode
     mode: {
       type: String,
-      enum: ["video", "phone", "in_person"],
+      enum: [
+        "video",
+        "phone",
+        "in_person",
+      ],
       default: "video",
     },
 
@@ -67,8 +75,32 @@ const consultationSchema = new mongoose.Schema(
 
     paymentStatus: {
       type: String,
-      enum: ["pending", "paid", "refunded"],
+      enum: [
+        "pending",
+        "paid",
+        "refunded",
+      ],
       default: "pending",
+    },
+
+    paymentId: {
+      type: String,
+      default: "",
+    },
+
+    paymentMethod: {
+      type: String,
+      enum: [
+        "upi",
+        "card",
+        "netbanking",
+      ],
+      default: "upi",
+    },
+
+    razorpayOrderId: {
+      type: String,
+      default: "",
     },
 
     // Appointment Status
@@ -85,6 +117,7 @@ const consultationSchema = new mongoose.Schema(
     },
 
     completedAt: Date,
+
     cancelledAt: Date,
   },
   {
@@ -92,7 +125,8 @@ const consultationSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model(
+module.exports =
+mongoose.model(
   "Consultation",
   consultationSchema
 );

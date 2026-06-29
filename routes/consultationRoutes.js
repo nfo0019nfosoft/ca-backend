@@ -1,4 +1,7 @@
 const express = require("express");
+console.log(
+  "Consultation Routes Loaded"
+);
 
 const router = express.Router();
 

@@ -66,7 +66,6 @@ exports.getVendorDashboard = async (req, res) => {
     // =========================
 
     const startOfDay = new Date();
-
     startOfDay.setHours(
       0,
       0,
@@ -75,7 +74,6 @@ exports.getVendorDashboard = async (req, res) => {
     );
 
     const endOfDay = new Date();
-
     endOfDay.setHours(
       23,
       59,
@@ -123,40 +121,22 @@ exports.getVendorDashboard = async (req, res) => {
     // Revenue
     // =========================
 
-const paidConsultations =
-  await Consultation.find({
-    vendorId,
-    paymentStatus: "paid"
-  });
+    const paidConsultations =
+      await Consultation.find({
+        vendorId,
+        paymentStatus: "paid"
+      });
 
-const monthlyRevenue =
-  paidConsultations.reduce(
-    (
-      total,
-      item
-    ) =>
-      total +
-      item.amount,
-    0
-  );
-
-   const monthlyRevenueData =
-  paidConsultations.map(
-    item => ({
-      day: new Date(
-        item.createdAt
-      ).toLocaleDateString(
-        "en-IN",
-        {
-          day: "numeric",
-          month: "short"
-        }
-      ),
-
-      revenue:
-        item.amount || 0
-    })
-  );
+    const monthlyRevenue =
+      paidConsultations.reduce(
+        (
+          total,
+          item
+        ) =>
+          total +
+          (item.amount || 0),
+        0
+      );
 
     // =========================
     // Monthly Revenue Graph

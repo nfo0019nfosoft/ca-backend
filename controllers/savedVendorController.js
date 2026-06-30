@@ -1,4 +1,11 @@
-const SavedVendor = require("../models/SavedVendor");
+const SavedVendor =
+require("../models/SavedVendor");
+
+const Vendor =
+require("../models/Vendor");
+
+const Activity =
+require("../models/Activity");
 
 /* ==========================
    SAVE VENDOR
@@ -26,6 +33,41 @@ exports.saveVendor = async (req, res) => {
       userId,
       vendorId,
     });
+const vendor =
+  await Vendor.findById(
+    vendorId
+  );
+
+await Activity.create({
+
+  userId,
+
+  type:
+    "saved",
+
+  title:
+    "CA Saved",
+
+  message:
+    `You saved ${
+      vendor?.fullName ||
+      "a CA"
+    } to your favourites.`
+
+});
+
+
+await Activity.create({
+  vendorId,
+  type: "saved",
+  title: "Profile Saved",
+  message: `${user.fullName || user.name} saved your profile`
+});
+
+
+
+
+
 
     return res.status(201).json({
       success: true,

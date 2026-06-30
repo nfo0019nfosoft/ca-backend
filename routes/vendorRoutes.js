@@ -16,7 +16,8 @@ const {
   getAllVendors,
   getVendorById,
   updateBankDetails,
-  searchVendors
+  searchVendors,
+  getVendorCalendar
 } = require("../controllers/vendorAuthController");
 
 /* -------------------------
@@ -155,11 +156,10 @@ router.get("/", getAllVendors);
 
 
 
-
-
-
-
-
+router.get(
+  "/calendar/:vendorId",
+  getVendorCalendar
+);
 
 
 

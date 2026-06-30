@@ -1,7 +1,7 @@
 const Vendor = require("../models/Vendor");
+const Activity = require("../models/Activity");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
 // =========================
 // REGISTER VENDOR
 // =========================
@@ -39,6 +39,12 @@ exports.registerVendor = async (req, res) => {
         mobile,
         password: hashedPassword,
       });
+      await Activity.create({
+  vendorId: vendor._id,
+  type: "profile_created",
+  title: "Profile Created",
+  message: "Vendor account created successfully"
+});
 
     const vendorData =
       vendor.toObject();
@@ -185,6 +191,12 @@ exports.updateProfile = async (
           runValidators: true,
         }
       ).select("-password");
+      await Activity.create({
+  vendorId: vendor._id,
+  type: "profile_updated",
+  title: "Profile Updated",
+  message: "Vendor updated profile information"
+});
 
     return res.status(200).json({
       success: true,
@@ -232,7 +244,12 @@ exports.updateServices = async (
           "Vendor not found",
       });
     }
-
+await Activity.create({
+  vendorId: vendor._id,
+  type: "services_updated",
+  title: "Services Updated",
+  message: "Vendor updated services and pricing"
+});
     return res.status(200).json({
       success: true,
       message:
@@ -303,6 +320,12 @@ exports.saveKyc = async (req, res) => {
     };
 
     await vendor.save();
+    await Activity.create({
+  vendorId: vendor._id,
+  type: "kyc_uploaded",
+  title: "KYC Uploaded",
+  message: "Vendor uploaded KYC documents"
+});
 
     console.log("KYC SAVED SUCCESSFULLY");
 
@@ -515,6 +538,12 @@ exports.updateBankDetails = async (
         message: "Vendor not found",
       });
     }
+    await Activity.create({
+  vendorId: vendor._id,
+  type: "bank_updated",
+  title: "Bank Details Updated",
+  message: "Vendor updated bank details"
+});
 
     return res.status(200).json({
       success: true,
@@ -526,6 +555,7 @@ exports.updateBankDetails = async (
   } catch (error) {
 
     console.log(error);
+    
 
     return res.status(500).json({
       success: false,
@@ -624,6 +654,57 @@ exports.searchVendors = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: error.message
+    });
+
+  }
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const Consultation = require("../models/Consultation");
+
+exports.getVendorCalendar = async (req, res) => {
+
+  try {
+
+    const { vendorId } = req.params;
+
+    const appointments =
+      await Consultation.find({
+        vendorId
+      })
+      .populate(
+        "userId",
+        "fullName name photo"
+      )
+      .sort({
+        appointmentDate: 1
+      });
+
+    return res.status(200).json({
+      success: true,
+      appointments
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Calendar fetch failed"
     });
 
   }

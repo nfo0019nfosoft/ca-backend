@@ -20,6 +20,13 @@ const recentRoutes = require("./routes/recentRoutes");
 const compareRoutes = require("./routes/compareRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const consultationRoutes = require("./routes/consultationRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const activityRoutes = require("./routes/activityRoutes");
+const vendorDashboardRoutes = require("./routes/vendorDashboardRoutes");
+
+
+
 
 const app = express();
 
@@ -100,6 +107,14 @@ app.use("/api/compare", compareRoutes);
 
 app.use( "/api/payment", paymentRoutes);
 app.use("/api/consultations", consultationRoutes );
+
+app.use("/api/notifications",notificationRoutes);
+app.use( "/api/dashboard", dashboardRoutes);
+
+
+app.use("/api/activities",activityRoutes);
+app.use("/api/vendor",vendorDashboardRoutes);
+
 
 // ======================
 // 404 ROUTE

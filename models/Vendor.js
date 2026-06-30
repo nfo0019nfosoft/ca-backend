@@ -228,6 +228,14 @@ const vendorSchema = new mongoose.Schema(
     default: "Pending"
   },
 
+
+
+
+
+  profileViews: {
+  type: Number,
+  default: 0
+},
   // ======================
   // VERIFICATION
   // ======================
@@ -241,6 +249,8 @@ const vendorSchema = new mongoose.Schema(
     type: Number,
     default: 0
   }
+
+  
 
 },
 {

@@ -143,45 +143,42 @@ exports.getVendorDashboard = async (req, res) => {
     // =========================
 
     const monthlyRevenueData =
-      await Consultation.aggregate([
+await Consultation.aggregate([
+  {
+    $match:{
+      vendorId: vendor._id,
+      paymentStatus:"paid"
+    }
+  },
 
-        {
-          $match: {
-
-            vendorId:
-              vendor._id,
-
-            paymentStatus:
-              "paid"
-
-          }
-        },
-
-        {
-          $group: {
-
-            _id: {
-              day: {
-                $dayOfMonth:
-                  "$createdAt"
-              }
-            },
-
-            revenue: {
-              $sum:
-                "$amount"
-            }
-
-          }
-        },
-
-        {
-          $sort: {
-            "_id.day": 1
-          }
+  {
+    $group:{
+      _id:{
+        day:{
+          $dayOfMonth:"$createdAt"
         }
+      },
 
-      ]);
+      revenue:{
+        $sum:"$amount"
+      }
+    }
+  },
+
+  {
+    $project:{
+      _id:0,
+      day:"$_id.day",
+      revenue:1
+    }
+  },
+
+  {
+    $sort:{
+      day:1
+    }
+  }
+]);
 
     // =========================
     // Notifications

@@ -17,7 +17,10 @@ const {
   getVendorById,
   updateBankDetails,
   searchVendors,
-  getVendorCalendar
+  getVendorCalendar,
+  getVendorAppointments,
+  getAvailability,
+  saveAvailability
 } = require("../controllers/vendorAuthController");
 
 /* -------------------------
@@ -163,6 +166,26 @@ router.get(
 
 
 
+router.get(
+  "/appointments/:vendorId",
+  getVendorAppointments
+);
+
+
+
+
+
+router.put(
+  "/availability",
+  authMiddleware,
+  saveAvailability
+);
+
+router.get(
+  "/availability",
+  authMiddleware,
+  getAvailability
+);
 
 // =========================
 // update bank details

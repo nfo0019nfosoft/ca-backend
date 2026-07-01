@@ -24,6 +24,8 @@ const notificationRoutes = require("./routes/notificationRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const activityRoutes = require("./routes/activityRoutes");
 const vendorDashboardRoutes = require("./routes/vendorDashboardRoutes");
+const vendorSettingsRoutes = require("./routes/vendorSettingsRoutes");
+
 
 
 
@@ -114,6 +116,8 @@ app.use( "/api/dashboard", dashboardRoutes);
 
 app.use("/api/activities",activityRoutes);
 app.use("/api/vendor",vendorDashboardRoutes);
+
+app.use("/api/vendor/settings",vendorSettingsRoutes);
 
 
 // ======================

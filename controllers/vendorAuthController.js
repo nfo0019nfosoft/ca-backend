@@ -710,3 +710,175 @@ exports.getVendorCalendar = async (req, res) => {
   }
 
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getVendorAppointments =
+async(req,res)=>{
+
+  try{
+
+    const vendorId =
+    req.params.vendorId;
+
+    const appointments =
+    await Consultation.find({
+      vendorId
+    })
+    .populate(
+      "userId",
+      "fullName photo"
+    )
+    .sort({
+      appointmentDate:-1
+    });
+
+    res.status(200).json({
+
+      appointments,
+
+      counts:{
+        all:
+        appointments.length,
+
+        upcoming:
+        appointments.filter(
+          a=>a.status ===
+          "upcoming"
+        ).length,
+
+        today:
+        appointments.filter(
+          a=>a.status ===
+          "today"
+        ).length,
+
+        completed:
+        appointments.filter(
+          a=>a.status ===
+          "completed"
+        ).length,
+
+        cancelled:
+        appointments.filter(
+          a=>a.status ===
+          "cancelled"
+        ).length,
+
+        noShow:
+        appointments.filter(
+          a=>a.status ===
+          "no-show"
+        ).length
+      },
+
+      vendor:
+      await Vendor.findById(
+        vendorId
+      ).select(
+        "fullName firmName photo"
+      )
+
+    });
+
+  }catch(err){
+
+    console.log(err);
+
+    res.status(500).json({
+      message:
+      "Server Error"
+    });
+
+  }
+
+};
+
+
+
+
+
+
+
+
+exports.saveAvailability =
+async(req,res)=>{
+
+ try{
+
+   const vendor =
+   await Vendor.findById(
+     req.user.id
+   );
+
+   vendor.availability =
+   req.body;
+
+   await vendor.save();
+
+   res.status(200).json({
+     success:true,
+     message:
+     "Availability saved",
+     availability:
+     vendor.availability
+   });
+
+ }catch(err){
+
+   res.status(500).json({
+     message:err.message
+   });
+
+ }
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getAvailability =
+async(req,res)=>{
+
+ try{
+
+   const vendor =
+   await Vendor.findById(
+     req.user.id
+   );
+
+   res.status(200).json(
+     vendor.availability || []
+   );
+
+ }catch(err){
+
+   res.status(500).json({
+     message:err.message
+   });
+
+ }
+
+};

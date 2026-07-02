@@ -30,15 +30,23 @@ exports.registerVendor = async (req, res) => {
     }
 
     const hashedPassword =
-      await bcrypt.hash(password, 10);
+await bcrypt.hash(password, 10);
 
-    const vendor =
-      await Vendor.create({
-        fullName,
-        email,
-        mobile,
-        password: hashedPassword,
-      });
+const referralCode =
+`${fullName
+.replace(/\s+/g,"")
+.toLowerCase()}${Math.floor(
+1000 + Math.random() * 9000
+)}`;
+
+const vendor =
+await Vendor.create({
+  fullName,
+  email,
+  mobile,
+  password: hashedPassword,
+  referralCode
+});
       await Activity.create({
   vendorId: vendor._id,
   type: "profile_created",
@@ -151,6 +159,29 @@ exports.getProfile = async (req, res) => {
         success: false,
         message: "Vendor not found",
       });
+    }
+
+    // =========================
+    // GENERATE REFERRAL CODE
+    // FOR OLD VENDORS
+    // =========================
+
+    if (!vendor.referralCode) {
+
+      vendor.referralCode =
+      `${vendor.fullName
+        .replace(/\s+/g, "")
+        .toLowerCase()}${Math.floor(
+          1000 + Math.random() * 9000
+        )}`;
+
+      await vendor.save();
+
+      console.log(
+        "NEW REFERRAL CODE GENERATED:",
+        vendor.referralCode
+      );
+
     }
 
     return res.status(200).json({

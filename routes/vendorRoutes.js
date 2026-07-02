@@ -4,6 +4,7 @@ const express = require("express");
 const router = express.Router();
 const upload = require("../middleware/upload");
 const authMiddleware = require("../middleware/authMiddleware");
+const vendorSettingsRoutes = require("./vendorSettingsRoutes");
 
 const {
   registerVendor,
@@ -195,6 +196,18 @@ router.put(
   authMiddleware,
   updateBankDetails
 );
+
+
+
+
+
+router.use(
+  "/settings",
+  vendorSettingsRoutes
+);
+
+
+
 
 
 /* -------------------------

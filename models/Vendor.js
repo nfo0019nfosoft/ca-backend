@@ -379,6 +379,42 @@ security: {
   type: Number,
   default: 0
 },
+
+
+
+
+
+
+
+referralCode: {
+  type: String,
+  unique: true,
+  default: () =>
+    `BUS${Math.random()
+      .toString(36)
+      .substring(2, 8)
+      .toUpperCase()}`
+},
+
+referralStats: {
+  joined: {
+    type: Number,
+    default: 0
+  },
+
+  earned: {
+    type: Number,
+    default: 0
+  },
+
+  pending: {
+    type: Number,
+    default: 0
+  }
+},
+
+
+
   // ======================
   // VERIFICATION
   // ======================

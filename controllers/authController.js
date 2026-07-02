@@ -178,39 +178,36 @@ exports.getProfile = async (
 /* =========================
    UPDATE PROFILE
 ========================= */
-
-exports.updateProfile = async (
-  req,
-  res
-) => {
+exports.updateProfile = async (req, res) => {
   try {
 
-    const user =
-      await User.findByIdAndUpdate(
-        req.user.id,
-        req.body,
-        {
-          new: true,
-          runValidators: true,
-        }
-      ).select("-password");
+    console.log("Incoming Data:");
+    console.log(req.body);
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).select("-password");
+
+    console.log("Updated User:");
+    console.log(user);
 
     return res.status(200).json({
       success: true,
       user,
-      message:
-        "Profile Updated Successfully",
     });
 
   } catch (error) {
-
     console.log(error);
 
     return res.status(500).json({
       success: false,
       message: error.message,
     });
-
   }
 };
 
@@ -221,3 +218,42 @@ exports.updateProfile = async (
 
 
 
+
+
+
+
+
+
+exports.getReferralStats =
+async(req,res)=>{
+
+try{
+
+const user =
+await User.findById(
+req.user.id
+);
+
+res.status(200).json({
+success:true,
+referralCode:
+user.referralCode,
+peopleJoined:
+user.totalReferrals,
+rewardsEarned:
+user.rewardsEarned,
+pendingRewards:
+user.pendingRewards
+});
+
+}
+catch(error){
+
+res.status(500).json({
+success:false,
+message:error.message
+});
+
+}
+
+};

@@ -4,7 +4,6 @@ require("../models/Vendor");
 const bcrypt =
 require("bcryptjs");
 
-
 // ====================================
 // GET SETTINGS
 // ====================================
@@ -13,16 +12,6 @@ exports.getVendorSettings =
 async(req,res)=>{
 
 try{
-
-
-console.log("REQ USER =>", req.user);
-console.log("REQ USER ID =>", req.user?.id);
-
-
-
-
-
-
 
 const vendor =
 await Vendor.findById(
@@ -60,7 +49,6 @@ message:
 }
 
 };
-
 
 // ====================================
 // UPDATE SETTINGS
@@ -105,17 +93,31 @@ message:
 
 }
 
+/* ==========================
+   BUSINESS DETAILS
+========================== */
+
 vendor.businessName =
 businessName;
 
 vendor.businessEmail =
 businessEmail;
 
-vendor.phone =
-phone;
-
 vendor.businessAddress =
 businessAddress;
+
+/* ==========================
+   SYNC WITH PROFILE
+========================== */
+
+vendor.firmName =
+businessName;
+
+vendor.officeEmail =
+businessEmail;
+
+vendor.officeMobile =
+phone;
 
 vendor.city =
 city;
@@ -123,8 +125,12 @@ city;
 vendor.state =
 state;
 
-vendor.pinCode =
+vendor.pincode =
 pinCode;
+
+/* ==========================
+   SETTINGS
+========================== */
 
 vendor.timeZone =
 timeZone;
@@ -143,6 +149,10 @@ smsNotifications;
 
 vendor.security =
 security;
+
+/* ==========================
+   SAVE
+========================== */
 
 await vendor.save();
 
@@ -168,7 +178,6 @@ message:
 }
 
 };
-
 
 // ====================================
 // CHANGE PASSWORD

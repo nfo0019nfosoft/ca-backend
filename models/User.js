@@ -326,6 +326,42 @@ verificationCompleted: {
 
 
 
+// ======================
+// REFERRAL SYSTEM
+// ======================
+
+referralCode: {
+  type: String,
+  unique: true,
+  default: () =>
+    `BUS${Math.random()
+      .toString(36)
+      .substring(2, 8)
+      .toUpperCase()}`
+},
+
+referredBy: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "User",
+  default: null
+},
+
+totalReferrals: {
+  type: Number,
+  default: 0
+},
+
+rewardsEarned: {
+  type: Number,
+  default: 0
+},
+
+pendingRewards: {
+  type: Number,
+  default: 0
+},
+
+
 recentViewed: [
   {
     vendor: {

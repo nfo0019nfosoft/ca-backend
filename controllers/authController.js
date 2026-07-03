@@ -257,3 +257,350 @@ message:error.message
 }
 
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.updateEmailPreferences =
+async(req,res)=>{
+
+try{
+
+const {key,value} =
+req.body;
+
+const user =
+await User.findById(
+req.user.id
+);
+
+user.emailPreferences[key] =
+value;
+
+await user.save();
+
+res.json({
+success:true
+});
+
+}
+catch(error){
+
+res.status(500).json({
+success:false,
+message:error.message
+});
+
+}
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.updateNotificationPreferences =
+async(req,res)=>{
+
+try{
+
+const {key,value} =
+req.body;
+
+const user =
+await User.findById(
+req.user.id
+);
+
+user.notificationPreferences[key] =
+value;
+
+await user.save();
+
+res.json({
+success:true
+});
+
+}
+catch(error){
+
+res.status(500).json({
+success:false,
+message:error.message
+});
+
+}
+
+};
+
+
+
+
+
+
+
+
+
+
+
+exports.changePassword =
+async(req,res)=>{
+
+try{
+
+const {
+currentPassword,
+newPassword
+} = req.body;
+
+const user =
+await User.findById(
+req.user.id
+);
+
+if(!user){
+return res.status(404).json({
+success:false,
+message:"User not found"
+});
+}
+
+const isMatch =
+await bcrypt.compare(
+currentPassword,
+user.password
+);
+
+if(!isMatch){
+return res.status(400).json({
+success:false,
+message:"Current password is incorrect"
+});
+}
+
+const hashedPassword =
+await bcrypt.hash(
+newPassword,
+10
+);
+
+user.password =
+hashedPassword;
+
+user.passwordSettings = {
+lastChanged:new Date()
+};
+
+await user.save();
+
+res.status(200).json({
+success:true,
+message:"Password updated successfully"
+});
+
+}
+catch(error){
+
+console.log(error);
+
+res.status(500).json({
+success:false,
+message:"Server Error"
+});
+
+}
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.updatePrivacySettings =
+async(req,res)=>{
+
+try{
+
+const {
+profileVisibility,
+dataSharing,
+activityTracking,
+marketingCommunications
+} = req.body;
+
+const user =
+await User.findByIdAndUpdate(
+req.user.id,
+{
+privacySettings:{
+profileVisibility,
+dataSharing,
+activityTracking,
+marketingCommunications
+}
+},
+{
+new:true
+}
+);
+
+res.status(200).json({
+success:true,
+message:"Privacy settings updated",
+privacySettings:
+user.privacySettings
+});
+
+}
+catch(error){
+
+console.log(error);
+
+res.status(500).json({
+success:false,
+message:"Server Error"
+});
+
+}
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.deleteAccount =
+async(req,res)=>{
+
+try{
+
+await User.findByIdAndUpdate(
+req.user.id,
+{
+isDeleted:true,
+deletedAt:new Date()
+}
+);
+
+res.status(200).json({
+success:true,
+message:"Account deleted successfully"
+});
+
+}
+catch(error){
+
+console.log(error);
+
+res.status(500).json({
+success:false,
+message:"Server Error"
+});
+
+}
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.downloadUserData =
+async(req,res)=>{
+
+try{
+
+const user =
+await User.findById(
+req.user.id
+)
+.select("-password");
+
+if(!user){
+return res.status(404).json({
+success:false,
+message:"User not found"
+});
+}
+
+res.status(200).json({
+success:true,
+data:user
+});
+
+}
+catch(error){
+
+console.log(error);
+
+res.status(500).json({
+success:false,
+message:"Server Error"
+});
+
+}
+
+};

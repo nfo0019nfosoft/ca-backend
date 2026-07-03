@@ -378,9 +378,167 @@ recentViewed: [
 
 
 
+savedPaymentMethods:[
+{
+  type:{
+    type:String,
+    enum:[
+      "card",
+      "upi",
+      "netbanking"
+    ]
+  },
+
+  cardBrand:String,
+  last4:String,
+  holderName:String,
+  expiryMonth:String,
+  expiryYear:String,
+  upiId:String,
+  bankName:String,
+
+  isDefault:{
+    type:Boolean,
+    default:false
+  }
+}
+],
+
+emailPreferences:{
+  accountUpdates:{
+    type:Boolean,
+    default:true
+  },
+
+  enquiryUpdates:{
+    type:Boolean,
+    default:true
+  },
+
+  appointmentReminders:{
+    type:Boolean,
+    default:true
+  },
+
+  paymentReceipts:{
+    type:Boolean,
+    default:true
+  },
+
+  offers:{
+    type:Boolean,
+    default:false
+  }
+},
+
+notificationPreferences:{
+  enquiryUpdates:{
+    type:Boolean,
+    default:true
+  },
+
+  appointmentReminders:{
+    type:Boolean,
+    default:true
+  },
+
+  newMessages:{
+    type:Boolean,
+    default:true
+  },
+
+  promotions:{
+    type:Boolean,
+    default:false
+  },
+
+  systemUpdates:{
+    type:Boolean,
+    default:true
+  }
+},
 
 
 
+
+
+passwordSettings:{
+lastChanged:Date
+},
+
+privacySettings:{
+profileVisibility:{
+type:String,
+default:"all"
+},
+dataSharing:{
+type:Boolean,
+default:true
+},
+activityTracking:{
+type:Boolean,
+default:true
+},
+marketingCommunications:{
+type:Boolean,
+default:false
+}
+},
+
+
+
+
+
+
+
+
+
+
+
+
+
+passwordSettings:{
+lastChanged:{
+type:Date
+}
+},
+
+privacySettings:{
+profileVisibility:{
+type:String,
+enum:[
+"all",
+"vendors",
+"private"
+],
+default:"all"
+},
+
+dataSharing:{
+type:Boolean,
+default:true
+},
+
+activityTracking:{
+type:Boolean,
+default:true
+},
+
+marketingCommunications:{
+type:Boolean,
+default:false
+}
+},
+
+isDeleted:{
+type:Boolean,
+default:false
+},
+
+deletedAt:{
+type:Date,
+default:null
+},
 
 
     // ======================

@@ -30,6 +30,7 @@ const vendorSettingsRoutes = require("./routes/vendorSettingsRoutes");
 
 
 
+
 const app = express();
 
 // ======================
@@ -107,7 +108,7 @@ app.use("/api/compare", compareRoutes);
 
 
 
-app.use( "/api/payment", paymentRoutes);
+app.use( "/api/payments", paymentRoutes);
 app.use("/api/consultations", consultationRoutes );
 
 app.use("/api/notifications",notificationRoutes);
@@ -118,6 +119,8 @@ app.use("/api/activities",activityRoutes);
 app.use("/api/vendor",vendorDashboardRoutes);
 
 app.use("/api/vendor/settings",vendorSettingsRoutes);
+
+
 
 
 // ======================

@@ -21,7 +21,8 @@ const {
   getVendorCalendar,
   getVendorAppointments,
   getAvailability,
-  saveAvailability
+  saveAvailability,
+  getCities
 } = require("../controllers/vendorAuthController");
 
 /* -------------------------
@@ -208,7 +209,7 @@ router.use(
 
 
 
-
+router.get("/cities", getCities);
 
 /* -------------------------
    GET SINGLE VENDOR

@@ -617,11 +617,18 @@ exports.searchVendors = async (req, res) => {
 
   try {
 
-    const { service, city, businessType } = req.query;
+    const {
+      service,
+      city,
+      businessType
+    } = req.query;
 
     let query = {};
 
-    // Service
+    // =========================
+    // Service Search
+    // =========================
+
     if (service) {
 
       query["services.serviceName"] = {
@@ -631,37 +638,23 @@ exports.searchVendors = async (req, res) => {
 
     }
 
-    // Location
+    // =========================
+    // City Search
+    // =========================
+
     if (city) {
 
-      query.$or = [
-
-        {
-          addressLine1: {
-            $regex: city,
-            $options: "i"
-          }
-        },
-
-        {
-          addressLine2: {
-            $regex: city,
-            $options: "i"
-          }
-        },
-
-        {
-          state: {
-            $regex: city,
-            $options: "i"
-          }
-        }
-
-      ];
+      query.city = {
+        $regex: city,
+        $options: "i"
+      };
 
     }
 
-    // Business Type
+    // =========================
+    // Business Type Search
+    // =========================
+
     if (businessType) {
 
       query.businessType = {
@@ -670,6 +663,10 @@ exports.searchVendors = async (req, res) => {
       };
 
     }
+
+    // =========================
+    // Fetch Vendors
+    // =========================
 
     const vendors = await Vendor.find(query)
       .select("-password");
@@ -696,8 +693,18 @@ exports.searchVendors = async (req, res) => {
 
 
 
+exports.getCities = async (req,res) => {
+  try{
+    const cities = await Vendor.distinct("city");
 
-
+    res.status(200).json(cities);
+  }
+  catch(err){
+    res.status(500).json({
+      message:"Error fetching cities"
+    });
+  }
+};
 
 
 

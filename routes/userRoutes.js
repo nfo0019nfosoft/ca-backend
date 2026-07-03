@@ -11,7 +11,19 @@ require("../middleware/authMiddleware");
 const {
   getProfile,
   updateProfile,
+  updateEmailPreferences,
+  updateNotificationPreferences,
+  changePassword,
+  updatePrivacySettings,
+  deleteAccount,
+  downloadUserData
 } = require("../controllers/authController");
+
+
+/* =====================
+   PROFILE
+===================== */
+
 router.get(
   "/profile",
   authMiddleware,
@@ -25,9 +37,26 @@ router.put(
 );
 
 
+/* =====================
+   EMAIL PREFERENCES
+===================== */
+
+router.put(
+  "/email-preferences",
+  authMiddleware,
+  updateEmailPreferences
+);
+
+router.put(
+  "/notification-preferences",
+  authMiddleware,
+  updateNotificationPreferences
+);
 
 
-
+/* =====================
+   PROFILE PHOTO
+===================== */
 
 router.post(
   "/photo",
@@ -50,7 +79,7 @@ router.post(
       res.json({
         success: true,
         profileImage:
-          user.profileImage,
+          user.profileImage
       });
 
     } catch (error) {
@@ -58,7 +87,7 @@ router.post(
       console.log(error);
 
       res.status(500).json({
-        success: false,
+        success: false
       });
 
     }
@@ -67,13 +96,53 @@ router.post(
 );
 
 
+/* =====================
+   PASSWORD
+===================== */
+
+router.put(
+  "/change-password",
+  authMiddleware,
+  changePassword
+);
 
 
+/* =====================
+   PRIVACY SETTINGS
+===================== */
+
+router.put(
+  "/privacy-settings",
+  authMiddleware,
+  updatePrivacySettings
+);
 
 
+/* =====================
+   DOWNLOAD USER DATA
+===================== */
+
+router.get(
+  "/download-data",
+  authMiddleware,
+  downloadUserData
+);
 
 
+/* =====================
+   DELETE ACCOUNT
+===================== */
 
+router.delete(
+  "/delete-account",
+  authMiddleware,
+  deleteAccount
+);
+
+
+/* =====================
+   DOCUMENT UPLOAD
+===================== */
 
 router.post(
   "/upload-document",
@@ -96,7 +165,7 @@ router.post(
 
         return res.status(404).json({
           success: false,
-          message: "User not found",
+          message: "User not found"
         });
 
       }
@@ -112,7 +181,7 @@ router.post(
         message:
           "Document uploaded successfully",
         file:
-          req.file.filename,
+          req.file.filename
       });
 
     } catch (error) {
@@ -121,11 +190,12 @@ router.post(
 
       res.status(500).json({
         success: false,
-        message: error.message,
+        message: error.message
       });
 
     }
 
   }
 );
+
 module.exports = router;

@@ -25,6 +25,8 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 const activityRoutes = require("./routes/activityRoutes");
 const vendorDashboardRoutes = require("./routes/vendorDashboardRoutes");
 const vendorSettingsRoutes = require("./routes/vendorSettingsRoutes");
+const subscriptionRoutes = require("./routes/subscriptionRoutes");
+const subscriptionInvoiceRoutes = require("./routes/subscriptionInvoiceRoutes");
 
 
 
@@ -119,6 +121,9 @@ app.use("/api/activities",activityRoutes);
 app.use("/api/vendor",vendorDashboardRoutes);
 
 app.use("/api/vendor/settings",vendorSettingsRoutes);
+app.use( "/api/subscription",  subscriptionRoutes);
+
+app.use( "/api/subscription-invoice", subscriptionInvoiceRoutes);
 
 
 

@@ -5,12 +5,50 @@ const paymentSchema = new mongoose.Schema(
   userId:{
     type:mongoose.Schema.Types.ObjectId,
     ref:"User",
-    required:true
+    default:null
   },
 
   vendorId:{
     type:mongoose.Schema.Types.ObjectId,
-    ref:"Vendor"
+    ref:"Vendor",
+    default:null
+  },
+
+  /* NEW */
+
+  paymentFor:{
+    type:String,
+    enum:[
+      "appointment",
+      "subscription",
+      "lead_purchase",
+      "advertisement"
+    ],
+    required:true
+  },
+
+  appointmentId:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"Consultation",
+    default:null
+  },
+
+  subscriptionId:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"VendorSubscription",
+    default:null
+  },
+
+  planId:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"SubscriptionPlan",
+    default:null
+  },
+
+  invoiceId:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"Invoice",
+    default:null
   },
 
   transactionId:{
@@ -20,6 +58,18 @@ const paymentSchema = new mongoose.Schema(
   },
 
   orderId:{
+    type:String
+  },
+
+  razorpayPaymentId:{
+    type:String
+  },
+
+  razorpayOrderId:{
+    type:String
+  },
+
+  razorpaySignature:{
     type:String
   },
 
@@ -40,6 +90,21 @@ const paymentSchema = new mongoose.Schema(
   amount:{
     type:Number,
     required:true
+  },
+
+  gstAmount:{
+    type:Number,
+    default:0
+  },
+
+  totalAmount:{
+    type:Number,
+    required:true
+  },
+
+  currency:{
+    type:String,
+    default:"INR"
   },
 
   paymentMethod:{
@@ -77,7 +142,7 @@ const paymentSchema = new mongoose.Schema(
       "Failed",
       "Refunded"
     ],
-    default:"Success"
+    default:"Pending"
   },
 
   invoiceUrl:{

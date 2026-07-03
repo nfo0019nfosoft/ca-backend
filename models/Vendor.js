@@ -384,6 +384,23 @@ security: {
 
 
 
+currentPlan:{
+  type:String,
+  default:"free"
+},
+
+subscriptionStatus:{
+  type:String,
+  default:"inactive"
+},
+
+subscriptionId:{
+  type:mongoose.Schema.Types.ObjectId,
+  ref:"VendorSubscription",
+  default:null
+},
+
+
 
 
 referralCode: {

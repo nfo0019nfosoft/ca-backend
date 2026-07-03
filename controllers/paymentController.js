@@ -80,6 +80,24 @@ message:error.message
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* ==================================
    VERIFY PAYMENT
 ================================== */
@@ -145,16 +163,21 @@ orderId:
 razorpay_order_id,
 
 description:
-"CA Service Payment",
+"Subscription Payment",
 
 type:
 "Payment",
 
 amount,
 
+totalAmount:
+req.body.totalAmount || amount,
+
+paymentFor:
+req.body.paymentFor || "Subscription",
+
 paymentMethod:
-paymentMethod ||
-"Razorpay",
+paymentMethod || "Razorpay",
 
 paymentProvider:
 "Razorpay",

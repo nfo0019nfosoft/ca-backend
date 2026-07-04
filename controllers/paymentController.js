@@ -10,6 +10,15 @@ require("../models/Activity");
 const Payment =
 require("../models/Payment");
 
+const VendorSubscription =
+require("../models/VendorSubscription");
+
+const SubscriptionPlan =
+require("../models/SubscriptionPlan");
+
+const SubscriptionInvoice =
+require("../models/SubscriptionInvoice");
+
 const razorpay =
 new Razorpay({
   key_id:
@@ -174,7 +183,7 @@ totalAmount:
 req.body.totalAmount || amount,
 
 paymentFor:
-req.body.paymentFor || "Subscription",
+req.body.paymentFor || "subscription",
 
 paymentMethod:
 paymentMethod || "Razorpay",
@@ -192,7 +201,119 @@ invoiceUrl:
 null
 
 });
+/* SAVE SUBSCRIPTION */
 
+const selectedPlan =
+await SubscriptionPlan.findOne({
+
+name:
+paymentDetails.planName
+
+});
+
+let expiryDate =
+new Date();
+
+if(
+paymentDetails.billingType ===
+"12months"
+){
+
+expiryDate.setMonth(
+expiryDate.getMonth() + 12
+);
+
+}
+else{
+
+expiryDate.setMonth(
+expiryDate.getMonth() + 3
+);
+
+}
+const subscription =
+await VendorSubscription.findOneAndUpdate(
+
+{
+  vendorId
+},
+
+{
+  vendorId,
+
+  planId:
+    selectedPlan._id,
+
+  paymentId:
+    payment._id,
+
+  amount,
+
+  billingCycle:
+    paymentDetails.billingType ===
+    "12months"
+    ? "Yearly"
+    : "Monthly",
+
+  startDate:
+    new Date(),
+
+  expiryDate,
+
+  nextRenewalDate:
+    expiryDate,
+
+  status:
+    "Active"
+},
+
+{
+  upsert:true,
+  new:true
+}
+
+);
+
+
+/* CREATE INVOICE */
+
+await SubscriptionInvoice.create({
+
+  vendorId,
+
+  subscriptionId:
+    subscription._id,
+
+  paymentId:
+    payment._id,
+
+  invoiceNumber:
+    `INV-${Date.now()}`,
+
+  planName:
+    paymentDetails.planName,
+
+  amount,
+
+  gst:
+    0,
+
+  totalAmount:
+    req.body.totalAmount || amount,
+
+  billingCycle:
+    paymentDetails.billingType ===
+    "12months"
+    ? "Yearly"
+    : "3 Months",
+
+  status:
+    "Paid",
+
+  invoicePdf:
+    null
+
+});
 
 /* USER NOTIFICATION */
 

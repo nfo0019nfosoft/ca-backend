@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const Vendor = require("../models/Vendor");
 const User = require("../models/User");
 const Enquiry = require("../models/Enquiry");
+const Ticket = require("../models/Ticket");
 
 // =====================
 // ADMIN LOGIN
@@ -678,6 +679,164 @@ exports.getAllBlogs = async (req, res) => {
       success: false,
       message: err.message
 
+    });
+
+  }
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getSupportHeader =
+async (req, res) => {
+
+  try {
+
+    const totalTickets =
+      await Ticket.countDocuments();
+
+    res.status(200).json({
+
+      success: true,
+
+      notificationCount: 0,
+
+      ticketCount:
+        totalTickets,
+
+      adminPhoto:
+        "/avatar.png",
+
+      adminName:
+        "Super Admin",
+
+      adminRole:
+        "Admin"
+
+    });
+
+  }
+
+  catch (err) {
+
+    res.status(500).json({
+      success:false,
+      message:err.message
+    });
+
+  }
+
+};
+
+
+
+
+
+
+
+exports.getSupportStats =
+async (req, res) => {
+
+  try {
+
+    const totalTickets =
+      await Ticket.countDocuments();
+
+    const openTickets =
+      await Ticket.countDocuments({
+        status: "Open"
+      });
+
+    const inProgress =
+      await Ticket.countDocuments({
+        status: "In Progress"
+      });
+
+    const resolved =
+      await Ticket.countDocuments({
+        status: "Resolved"
+      });
+
+    const closed =
+      await Ticket.countDocuments({
+        status: "Closed"
+      });
+
+    res.status(200).json({
+      success: true,
+
+      stats: {
+        totalTickets,
+        openTickets,
+        inProgress,
+        resolved,
+        closed
+      }
+    });
+
+  }
+
+  catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+
+  }
+
+};
+
+
+
+
+
+
+
+
+
+
+exports.getAllTickets =
+async (req, res) => {
+
+  try {
+
+    const tickets =
+      await Ticket.find()
+      .populate(
+        "userId",
+        "name email"
+      )
+      .populate(
+        "vendorId",
+        "name email"
+      )
+      .sort({
+        createdAt: -1
+      });
+
+    res.status(200).json({
+      success: true,
+      tickets
+    });
+
+  }
+
+  catch (err) {
+
+    res.status(500).json({
+      success: false,
+      message: err.message
     });
 
   }

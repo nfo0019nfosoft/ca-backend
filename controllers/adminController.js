@@ -4,6 +4,7 @@ const Vendor = require("../models/Vendor");
 const User = require("../models/User");
 const Enquiry = require("../models/Enquiry");
 const Ticket = require("../models/Ticket");
+const Consultation = require("../models/Consultation");
 
 // =====================
 // ADMIN LOGIN
@@ -840,5 +841,205 @@ async (req, res) => {
     });
 
   }
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getAdminAppointments =
+async (req, res) => {
+
+    try {
+
+        const appointments =
+        await Consultation.find()
+
+        .populate(
+            "vendorId",
+            "fullName name firmName photo"
+        )
+
+        .populate(
+            "userId",
+            "fullName name photo email mobile"
+        )
+
+        .sort({
+            appointmentDate: -1
+        });
+
+        res.status(200).json({
+            success: true,
+            appointments
+        });
+
+    }
+
+    catch(error){
+
+        res.status(500).json({
+            success:false,
+            message:error.message
+        });
+
+    }
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getAdminAppointments =
+async (req, res) => {
+
+    try {
+
+        const appointments =
+        await Consultation.find()
+
+        .populate(
+            "vendorId",
+            "fullName firmName name photo"
+        )
+
+        .populate(
+            "userId",
+            "fullName name photo"
+        )
+
+        .sort({
+            createdAt: -1
+        });
+
+        console.log(
+            appointments
+        );
+
+        res.status(200).json({
+            success: true,
+            appointments
+        });
+
+    }
+
+    catch(error){
+
+        console.log(error);
+
+        res.status(500).json({
+            success:false,
+            message:error.message
+        });
+
+    }
+
+};
+
+
+
+
+
+
+
+
+
+exports.getAppointmentStats =
+async (req, res) => {
+
+    try {
+
+        const totalAppointments =
+        await Consultation.countDocuments();
+
+        const completedAppointments =
+        await Consultation.countDocuments({
+            status: "completed"
+        });
+
+        const scheduledAppointments =
+        await Consultation.countDocuments({
+            status: "upcoming"
+        });
+
+        const cancelledAppointments =
+        await Consultation.countDocuments({
+            status: "cancelled"
+        });
+
+        const noShowAppointments =
+        await Consultation.countDocuments({
+            status: "no-show"
+        });
+
+        const completionRate =
+        totalAppointments > 0
+        ?
+        Math.round(
+            (
+                completedAppointments /
+                totalAppointments
+            ) * 100
+        )
+        :
+        0;
+
+        res.status(200).json({
+
+            success: true,
+
+            stats: {
+
+                totalAppointments,
+
+                completedAppointments,
+
+                scheduledAppointments,
+
+                cancelledAppointments,
+
+                noShowAppointments,
+
+                completionRate
+
+            }
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message
+
+        });
+
+    }
 
 };

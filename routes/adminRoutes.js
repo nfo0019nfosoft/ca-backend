@@ -19,7 +19,9 @@ const {
   deleteLead,
   getAllBlogs,
   getSupportHeader,
-  getSupportStats
+  getSupportStats,
+  getAdminAppointments,
+  getAppointmentStats
 } = require("../controllers/adminController");
 
 const {
@@ -185,10 +187,16 @@ router.delete(
 );
 
 
+router.get(
+  "/appointments",
+  getAdminAppointments
+);
 
 
-
-
+router.get(
+  "/appointment-stats",
+  getAppointmentStats
+);
 
 
 module.exports = router;

@@ -22,7 +22,8 @@ const {
   getVendorAppointments,
   getAvailability,
   saveAvailability,
-  getCities
+  getCities,
+   updateAppointmentStatus
 } = require("../controllers/vendorAuthController");
 
 /* -------------------------
@@ -216,5 +217,9 @@ router.get("/cities", getCities);
    ALWAYS KEEP LAST
 ------------------------- */
 router.get("/:id", getVendorById);
+router.put(
+    "/appointments/:id/status",
+    updateAppointmentStatus
+);
 
 module.exports = router;

@@ -437,37 +437,39 @@ exports.replyTicket = async (req, res) => {
 
         if (ticket.userId) {
 
-            await Notification.create({
 
-                userId:
-                    ticket.userId,
+await Notification.create({
 
-                title:
-                    "Support Ticket Updated",
+    userId: ticket.userId,
 
-                message:
-                    "Your support ticket has received a reply."
+    title: "Support Ticket Updated",
 
-            });
+  message:
+`Your support ticket "${ticket.subject}" has received a reply.`,
+
+    ticketId:
+        ticket._id
+
+});
 
         }
 
 
         if (ticket.vendorId) {
 
-            await Notification.create({
+       await Notification.create({
 
-                vendorId:
-                    ticket.vendorId,
+    vendorId: ticket.vendorId,
 
-                title:
-                    "Support Ticket Updated",
+    title: "Support Ticket Updated",
 
-                message:
-                    "Your support ticket has received a reply."
+   message:
+`Your support ticket "${ticket.subject}" has received a reply.`,
 
-            });
+    ticketId:
+        ticket._id
 
+});
         }
 
         res.json({

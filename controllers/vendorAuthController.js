@@ -757,6 +757,46 @@ exports.getVendorCalendar = async (req, res) => {
 
 
 
+exports.updateAppointmentStatus =
+async(req,res)=>{
+
+    try{
+
+        const { status } =
+        req.body;
+
+        const appointment =
+        await Consultation.findByIdAndUpdate(
+            req.params.id,
+            {
+                status
+            },
+            {
+                new:true
+            }
+        );
+
+        res.status(200).json({
+            success:true,
+            appointment
+        });
+
+    }
+
+    catch(err){
+
+        console.log(err);
+
+        res.status(500).json({
+            success:false,
+            message:err.message
+        });
+
+    }
+
+};
+
+
 
 
 
@@ -788,42 +828,53 @@ async(req,res)=>{
     res.status(200).json({
 
       appointments,
+counts:{
 
-      counts:{
-        all:
-        appointments.length,
+    all:
+    appointments.length,
 
-        upcoming:
-        appointments.filter(
-          a=>a.status ===
-          "upcoming"
-        ).length,
+    scheduled:
+    appointments.filter(
+      a => a.status ===
+      "scheduled"
+    ).length,
 
-        today:
-        appointments.filter(
-          a=>a.status ===
-          "today"
-        ).length,
+    upcoming:
+    appointments.filter(
+      a => a.status ===
+      "upcoming"
+    ).length,
 
-        completed:
-        appointments.filter(
-          a=>a.status ===
-          "completed"
-        ).length,
+    today:
+    appointments.filter(
+      a => a.status ===
+      "today"
+    ).length,
 
-        cancelled:
-        appointments.filter(
-          a=>a.status ===
-          "cancelled"
-        ).length,
+    completed:
+    appointments.filter(
+      a => a.status ===
+      "completed"
+    ).length,
 
-        noShow:
-        appointments.filter(
-          a=>a.status ===
-          "no-show"
-        ).length
-      },
+    cancelled:
+    appointments.filter(
+      a => a.status ===
+      "cancelled"
+    ).length,
 
+    rescheduled:
+    appointments.filter(
+      a => a.status ===
+      "rescheduled"
+    ).length,
+
+    noShow:
+    appointments.filter(
+      a => a.status ===
+      "no-show"
+    ).length
+},
       vendor:
       await Vendor.findById(
         vendorId

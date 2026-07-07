@@ -21,7 +21,13 @@ const {
   getSupportHeader,
   getSupportStats,
   getAdminAppointments,
-  getAppointmentStats
+  getAppointmentStats,
+  getAppointmentDashboard,
+  getPerformanceOverview,
+  getAppointmentTrends,
+  appointmentStatus,
+  appointmentSources
+
 } = require("../controllers/adminController");
 
 const {
@@ -198,5 +204,21 @@ router.get(
   getAppointmentStats
 );
 
+router.get(
+  "/appointment-dashboard",
+  getAppointmentDashboard
+);
+
+
+router.get(
+  "/performance-overview",
+  getPerformanceOverview
+);
+
+
+router.get(
+    "/appointment-trends",
+    getAppointmentTrends
+);
 
 module.exports = router;

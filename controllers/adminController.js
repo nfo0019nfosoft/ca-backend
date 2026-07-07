@@ -12,52 +12,136 @@ const Consultation = require("../models/Consultation");
 
 exports.adminLogin = async (req, res) => {
 
-  try {
+    try {
 
-    const { email, password } = req.body;
+        const { email, password } = req.body;
 
-    if (
-      email !== process.env.ADMIN_EMAIL ||
-      password !== process.env.ADMIN_PASSWORD
-    ) {
+        const admin = await AdminAccount.findOne({
+            email
+        });
 
-      return res.status(401).json({
-        success: false,
-        message: "Invalid Admin Credentials"
-      });
+        if (!admin) {
+
+            return res.status(401).json({
+
+                success: false,
+
+                message: "Invalid Email or Password"
+
+            });
+
+        }
+
+        if (admin.status !== "Active") {
+
+            return res.status(403).json({
+
+                success: false,
+
+                message: "Your account is inactive."
+
+            });
+
+        }
+
+        if (!admin.loginAccess) {
+
+            return res.status(403).json({
+
+                success: false,
+
+                message: "Login access disabled."
+
+            });
+
+        }
+
+        const isMatch =
+            await bcrypt.compare(
+                password,
+                admin.password
+            );
+
+        if (!isMatch) {
+
+            return res.status(401).json({
+
+                success: false,
+
+                message: "Invalid Email or Password"
+
+            });
+
+        }
+
+        admin.lastLogin = new Date();
+
+        await admin.save();
+
+        const token = jwt.sign(
+
+            {
+
+                id: admin._id,
+
+                role: admin.role,
+
+                email: admin.email
+
+            },
+
+            process.env.JWT_SECRET,
+
+            {
+
+                expiresIn: "7d"
+
+            }
+
+        );
+
+        res.status(200).json({
+
+            success: true,
+
+            token,
+
+            role: admin.role,
+
+            admin: {
+
+                id: admin._id,
+
+                fullName: admin.fullName,
+
+                email: admin.email,
+
+                role: admin.role,
+
+                profilePhoto: admin.profilePhoto,
+
+                mustChangePassword:
+                    admin.mustChangePassword
+
+            }
+
+        });
 
     }
 
-    const token = jwt.sign(
-      {
-        role: "admin"
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "7d"
-      }
-    );
+    catch (err) {
 
-    res.status(200).json({
+        console.log(err);
 
-      success: true,
-      token,
-      role: "admin"
+        res.status(500).json({
 
-    });
+            success: false,
 
-  }
+            message: err.message
 
-  catch (err) {
+        });
 
-    res.status(500).json({
-
-      success: false,
-      message: err.message
-
-    });
-
-  }
+    }
 
 };
 
@@ -1037,6 +1121,747 @@ async (req, res) => {
             success: false,
 
             message: error.message
+
+        });
+
+    }
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getAppointmentDashboard = async (req, res) => {
+
+  try {
+
+    const now = new Date();
+
+    // =========================
+    // Upcoming Appointments
+    // =========================
+
+    const upcomingAppointments =
+      await Consultation.find({
+        status: "upcoming",
+        appointmentDate: {
+          $gte: now
+        }
+      })
+      .populate(
+        "userId",
+        "fullName name"
+      )
+      .sort({
+        appointmentDate: 1
+      })
+      .limit(5);
+
+    // =========================
+    // Peak Time
+    // =========================
+
+    const allAppointments =
+      await Consultation.find();
+
+    const timeMap = {};
+
+    allAppointments.forEach((item) => {
+
+      const time =
+        item.startTime || "Unknown";
+
+      timeMap[time] =
+        (timeMap[time] || 0) + 1;
+
+    });
+
+    let peakTime = "-";
+    let max = 0;
+
+    Object.keys(timeMap).forEach((time) => {
+
+      if (timeMap[time] > max) {
+
+        max = timeMap[time];
+        peakTime = time;
+
+      }
+
+    });
+
+    // =========================
+    // Average Duration
+    // =========================
+
+    const durationAppointments =
+      allAppointments.filter(
+        a => a.duration
+      );
+
+    const avgDuration =
+      durationAppointments.length
+      ?
+      Math.round(
+
+        durationAppointments.reduce(
+          (sum, item) =>
+            sum + item.duration,
+          0
+        )
+
+        /
+
+        durationAppointments.length
+
+      )
+      :
+      0;
+
+    // =========================
+    // Rates
+    // =========================
+
+    const total =
+      allAppointments.length;
+
+    const cancelled =
+      allAppointments.filter(
+        a => a.status === "cancelled"
+      ).length;
+
+    const rescheduled =
+      allAppointments.filter(
+        a => a.status === "rescheduled"
+      ).length;
+
+    res.json({
+
+      success: true,
+
+      upcomingAppointments,
+
+      insights: {
+
+        peakTime,
+
+        averageDuration:
+          `${avgDuration} min`,
+
+        rescheduleRate:
+
+          total
+
+          ?
+
+          `${(
+
+            rescheduled
+
+            /
+
+            total
+
+            *
+
+            100
+
+          ).toFixed(1)}%`
+
+          :
+
+          "0%",
+
+        cancellationRate:
+
+          total
+
+          ?
+
+          `${(
+
+            cancelled
+
+            /
+
+            total
+
+            *
+
+            100
+
+          ).toFixed(1)}%`
+
+          :
+
+          "0%"
+
+      }
+
+    });
+
+  }
+
+  catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+
+  }
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ======================================
+// PERFORMANCE OVERVIEW
+// ======================================
+
+exports.getPerformanceOverview = async (req, res) => {
+
+  try {
+
+    const totalAppointments =
+      await Consultation.countDocuments();
+
+    const completed =
+      await Consultation.countDocuments({
+        status: "completed"
+      });
+
+    const cancelled =
+      await Consultation.countDocuments({
+        status: "cancelled"
+      });
+
+    const noShow =
+      await Consultation.countDocuments({
+        status: "no-show"
+      });
+
+    const rescheduled =
+      await Consultation.countDocuments({
+        status: "rescheduled"
+      });
+
+    const completionRate =
+      totalAppointments
+        ? Number(
+            (
+              (completed / totalAppointments) *
+              100
+            ).toFixed(2)
+          )
+        : 0;
+
+    const cancellationRate =
+      totalAppointments
+        ? Number(
+            (
+              (cancelled / totalAppointments) *
+              100
+            ).toFixed(2)
+          )
+        : 0;
+
+    const noShowRate =
+      totalAppointments
+        ? Number(
+            (
+              (noShow / totalAppointments) *
+              100
+            ).toFixed(2)
+          )
+        : 0;
+
+    const rescheduleRate =
+      totalAppointments
+        ? Number(
+            (
+              (rescheduled / totalAppointments) *
+              100
+            ).toFixed(2)
+          )
+        : 0;
+
+    res.status(200).json({
+
+      success: true,
+
+      performance: {
+
+        completionRate: {
+
+          value: completionRate,
+
+          change: "+3.2%",
+
+          trend: [
+            55,
+            58,
+            60,
+            61,
+            60,
+            62,
+            completionRate
+          ]
+
+        },
+
+        cancellationRate: {
+
+          value: cancellationRate,
+
+          change: "-0.8%",
+
+          trend: [
+            6,
+            6.5,
+            5,
+            4,
+            5,
+            3,
+            cancellationRate
+          ]
+
+        },
+
+        noShowRate: {
+
+          value: noShowRate,
+
+          change: "+0.3%",
+
+          trend: [
+            2.5,
+            2.3,
+            2.1,
+            1.8,
+            2,
+            2.2,
+            noShowRate
+          ]
+
+        },
+
+        rescheduleRate: {
+
+          value: rescheduleRate,
+
+          change: "+1.1%",
+
+          trend: [
+            7,
+            6,
+            8,
+            5,
+            9,
+            8.5,
+            rescheduleRate
+          ]
+
+        }
+
+      }
+
+    });
+
+  }
+
+  catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+
+      success: false,
+
+      message: err.message
+
+    });
+
+  }
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.getAppointmentTrends = async (req, res) => {
+
+    try {
+
+        const period =
+            req.query.period || "thisWeek";
+
+        let startDate = new Date();
+        let endDate = new Date();
+        let labels = [];
+
+        if (period === "thisWeek") {
+
+            const day = startDate.getDay();
+
+            startDate.setDate(
+                startDate.getDate() - day
+            );
+
+            startDate.setHours(0, 0, 0, 0);
+
+            endDate = new Date(startDate);
+            endDate.setDate(
+                startDate.getDate() + 6
+            );
+
+            labels = [
+                "Sun",
+                "Mon",
+                "Tue",
+                "Wed",
+                "Thu",
+                "Fri",
+                "Sat"
+            ];
+
+        }
+
+        else if (period === "lastWeek") {
+
+            const day = startDate.getDay();
+
+            startDate.setDate(
+                startDate.getDate() - day - 7
+            );
+
+            startDate.setHours(0, 0, 0, 0);
+
+            endDate = new Date(startDate);
+            endDate.setDate(
+                startDate.getDate() + 6
+            );
+
+            labels = [
+                "Sun",
+                "Mon",
+                "Tue",
+                "Wed",
+                "Thu",
+                "Fri",
+                "Sat"
+            ];
+
+        }
+
+        else {
+
+            startDate = new Date(
+                new Date().getFullYear(),
+                new Date().getMonth(),
+                1
+            );
+
+            endDate = new Date(
+                new Date().getFullYear(),
+                new Date().getMonth() + 1,
+                0
+            );
+
+            labels = Array.from(
+                {
+                    length: endDate.getDate()
+                },
+                (_, i) => `${i + 1}`
+            );
+
+        }
+
+        const appointments =
+            await Consultation.find({
+
+                appointmentDate: {
+                    $gte: startDate,
+                    $lte: endDate
+                }
+
+            });
+
+        const total =
+            Array(labels.length).fill(0);
+
+        const completed =
+            Array(labels.length).fill(0);
+
+        const cancelled =
+            Array(labels.length).fill(0);
+
+        const noShow =
+            Array(labels.length).fill(0);
+
+        appointments.forEach((item) => {
+
+            let index;
+
+            if (period === "thisMonth") {
+
+                index =
+                    new Date(
+                        item.appointmentDate
+                    ).getDate() - 1;
+
+            }
+
+            else {
+
+                index =
+                    new Date(
+                        item.appointmentDate
+                    ).getDay();
+
+            }
+
+            total[index]++;
+
+            if (item.status === "completed") {
+
+                completed[index]++;
+
+            }
+
+            else if (item.status === "cancelled") {
+
+                cancelled[index]++;
+
+            }
+
+            else if (
+                item.status === "no-show"
+            ) {
+
+                noShow[index]++;
+
+            }
+
+        });
+
+        // ===========================
+        // Appointment Types
+        // ===========================
+
+        const typeMap = {};
+
+        appointments.forEach((item) => {
+
+            const type =
+                item.serviceName ||
+                "Others";
+
+            typeMap[type] =
+                (typeMap[type] || 0) + 1;
+
+        });
+
+        const colors = {
+
+            Consultation: "#2563eb",
+
+            "Follow Up": "#10b981",
+
+            "Document Review": "#f59e0b",
+
+            Support: "#7c3aed",
+
+            Others: "#ec4899"
+
+        };
+
+        const appointmentTypes =
+
+            Object.keys(typeMap).map((key) => ({
+
+                name: key,
+
+                value: typeMap[key],
+
+                color:
+                    colors[key] ||
+                    "#94a3b8"
+
+            }));
+
+
+        // ===========================
+        // Appointment Status
+        // ===========================
+
+        const statusMap = {};
+
+        appointments.forEach((item) => {
+
+            const status =
+                item.status || "scheduled";
+
+            statusMap[status] =
+                (statusMap[status] || 0) + 1;
+
+        });
+
+        const statusColors = {
+
+            completed: "#2563eb",
+
+            scheduled: "#10b981",
+
+            cancelled: "#f59e0b",
+
+            "no-show": "#ec4899"
+
+        };
+
+        const appointmentStatus =
+
+            Object.keys(statusMap).map((key) => ({
+
+                name:
+                    key.charAt(0).toUpperCase() +
+                    key.slice(1),
+
+                value:
+                    statusMap[key],
+
+                color:
+                    statusColors[key] ||
+                    "#94a3b8"
+
+            }));
+
+
+        // ===========================
+        // Appointment Sources
+        // ===========================
+
+        const sourceMap = {};
+
+        appointments.forEach((item) => {
+
+            const source =
+                item.source ||
+                "Website";
+
+            sourceMap[source] =
+                (sourceMap[source] || 0) + 1;
+
+        });
+
+        const sourceColors = {
+
+            Website: "#2563eb",
+
+            Referral: "#10b981",
+
+            Advertisement: "#f59e0b",
+
+            "Social Media": "#7c3aed",
+
+            Others: "#14b8a6"
+
+        };
+
+        const appointmentSources =
+
+            Object.keys(sourceMap).map((key) => ({
+
+                name: key,
+
+                value:
+                    sourceMap[key],
+
+                color:
+                    sourceColors[key] ||
+                    "#64748b"
+
+            }));
+
+
+        // ===========================
+        // Response
+        // ===========================
+
+        res.json({
+
+            success: true,
+
+            labels,
+
+            total,
+
+            completed,
+
+            cancelled,
+
+            noShow,
+
+            totalAppointments:
+                appointments.length,
+
+            appointmentTypes,
+
+            appointmentStatus,
+
+            appointmentSources
+
+        });
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
 
         });
 

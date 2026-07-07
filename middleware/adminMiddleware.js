@@ -1,18 +1,49 @@
 const adminMiddleware = (
-  req,
-  res,
-  next
+    req,
+    res,
+    next
 ) => {
-  if (
-    req.user.role !== "admin"
-  ) {
-    return res.status(403).json({
-      message: "Admin only",
-    });
-  }
 
-  next();
+    if (!req.user) {
+
+        return res.status(401).json({
+
+            success: false,
+
+            message: "Unauthorized"
+
+        });
+
+    }
+
+    const allowedRoles = [
+
+        "superadmin",
+
+        "admin"
+
+    ];
+
+    if (
+
+        !allowedRoles.includes(
+            req.user.role
+        )
+
+    ) {
+
+        return res.status(403).json({
+
+            success: false,
+
+            message: "Access Denied"
+
+        });
+
+    }
+
+    next();
+
 };
 
-module.exports =
-  adminMiddleware;
+module.exports = adminMiddleware;

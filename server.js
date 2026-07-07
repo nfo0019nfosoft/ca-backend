@@ -28,6 +28,8 @@ const vendorSettingsRoutes = require("./routes/vendorSettingsRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
 const subscriptionInvoiceRoutes = require("./routes/subscriptionInvoiceRoutes");
 const ticketRoutes = require("./routes/ticketRoutes");
+const adminAccountRoutes = require("./routes/adminAccountRoutes");
+
 
 
 
@@ -125,6 +127,11 @@ app.use( "/api/subscription",  subscriptionRoutes);
 app.use( "/api/subscription-invoice", subscriptionInvoiceRoutes);
 
 app.use( "/api/tickets", ticketRoutes);
+app.use(
+    "/api/admin-accounts",
+   
+    adminAccountRoutes
+);
 
 
 

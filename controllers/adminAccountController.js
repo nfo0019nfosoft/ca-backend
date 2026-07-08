@@ -1,5 +1,85 @@
 const AdminAccount = require("../models/AdminAccount");
 const bcrypt = require("bcryptjs");
+const sendMail = require("../utils/sendMail");
+
+
+
+
+exports.createSuperAdmin = async (req, res) => {
+
+    try {
+
+        const exists = await AdminAccount.findOne({
+            role: "superadmin"
+        });
+
+        if (exists) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Super Admin already exists"
+            });
+
+        }
+
+        const password = await bcrypt.hash(
+            "Admin@123",
+            10
+        );
+
+        const admin = await AdminAccount.create({
+
+            fullName: "Super Admin",
+
+            email: "admin@caconnect.com",
+
+            phone: "9999999999",
+
+            password,
+
+            role: "superadmin",
+
+            status: "Active",
+
+            loginAccess: true,
+
+            emailNotifications: true,
+
+            twoFactorEnabled: false,
+
+            mustChangePassword: false
+
+        });
+
+        res.json({
+
+            success: true,
+
+            message: "Super Admin Created",
+
+            admin
+
+        });
+
+    }
+
+    catch (err) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
+
+
+
+
 
 /* ==========================================
    CREATE NEW ADMIN
@@ -147,20 +227,25 @@ exports.getAdmins = async (req, res) => {
 
 
 
-/* ==========================================
-   GET SINGLE ADMIN
-========================================== */
+
+
+
+
+
+
+
+
+
+
+
 
 exports.getAdminById = async (req, res) => {
 
     try {
 
-        const admin =
-            await AdminAccount.findById(
-                req.params.id
-            )
-
-                .select("-password");
+        const admin = await AdminAccount
+            .findById(req.params.id)
+            .select("-password");
 
         if (!admin) {
 
@@ -168,14 +253,13 @@ exports.getAdminById = async (req, res) => {
 
                 success: false,
 
-                message:
-                    "Admin not found."
+                message: "Admin not found."
 
             });
 
         }
 
-        res.json({
+        res.status(200).json({
 
             success: true,
 
@@ -193,8 +277,7 @@ exports.getAdminById = async (req, res) => {
 
             success: false,
 
-            message:
-                "Server Error"
+            message: err.message
 
         });
 
@@ -204,85 +287,52 @@ exports.getAdminById = async (req, res) => {
 
 
 
-/* ==========================================
-   DELETE ADMIN
-========================================== */
-
-exports.deleteAdmin = async (req, res) => {
-
-    try {
-
-        const admin =
-            await AdminAccount.findById(
-                req.params.id
-            );
-
-        if (!admin) {
-
-            return res.status(404).json({
-
-                success: false,
-
-                message:
-                    "Admin not found."
-
-            });
-
-        }
-
-        await admin.deleteOne();
-
-        res.json({
-
-            success: true,
-
-            message:
-                "Admin deleted successfully."
-
-        });
-
-    }
-
-    catch (err) {
-
-        console.log(err);
-
-        res.status(500).json({
-
-            success: false,
-
-            message:
-                "Server Error"
-
-        });
-
-    }
-
-};
 
 
 
-/* ==========================================
-   UPDATE ADMIN
-========================================== */
+
+
+
+
 
 exports.updateAdmin = async (req, res) => {
 
     try {
 
+        const existingAdmin =
+            await AdminAccount.findOne({
+
+                email: req.body.email,
+
+                _id: {
+                    $ne: req.params.id
+                }
+
+            });
+
+        if (existingAdmin) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "Email already exists."
+
+            });
+
+        }
+
         const updateData = {
 
-            fullName:
-                req.body.fullName,
+            fullName: req.body.fullName,
 
-            phone:
-                req.body.phone,
+            email: req.body.email,
 
-            role:
-                req.body.role,
+            phone: req.body.phone,
 
-            status:
-                req.body.status,
+            role: req.body.role,
+
+            status: req.body.status,
 
             emailNotifications:
                 req.body.emailNotifications,
@@ -310,17 +360,32 @@ exports.updateAdmin = async (req, res) => {
                 updateData,
 
                 {
-                    new: true
+
+                    new: true,
+
+                    runValidators: true
+
                 }
 
             ).select("-password");
 
-        res.json({
+        if (!admin) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Admin not found."
+
+            });
+
+        }
+
+        res.status(200).json({
 
             success: true,
 
-            message:
-                "Admin updated successfully.",
+            message: "Admin updated successfully.",
 
             admin
 
@@ -336,8 +401,281 @@ exports.updateAdmin = async (req, res) => {
 
             success: false,
 
+            message: err.message
+
+        });
+
+    }
+
+};
+
+
+
+
+
+
+
+
+
+
+exports.deleteAdmin = async (req, res) => {
+
+    try {
+
+        const admin =
+            await AdminAccount.findById(
+                req.params.id
+            );
+
+        if (!admin) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Admin not found."
+
+            });
+
+        }
+
+        await AdminAccount.findByIdAndDelete(
+            req.params.id
+        );
+
+        res.status(200).json({
+
+            success: true,
+
             message:
-                "Server Error"
+                "Admin deleted successfully."
+
+        });
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.changeStatus = async (req, res) => {
+
+    try {
+
+        const admin =
+            await AdminAccount.findByIdAndUpdate(
+
+                req.params.id,
+
+                {
+
+                    status:
+                        req.body.status
+
+                },
+
+                {
+
+                    new: true
+
+                }
+
+            ).select("-password");
+
+        if (!admin) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Admin not found."
+
+            });
+
+        }
+
+        res.status(200).json({
+
+            success: true,
+
+            message:
+                "Status updated successfully.",
+
+            admin
+
+        });
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+exports.sendLoginDetails = async (req, res) => {
+
+    try {
+
+        const {
+
+            fullName,
+            email,
+            password,
+            role
+
+        } = req.body;
+
+        const html = `
+
+        <div style="font-family:Arial;padding:30px;background:#f5f5f5;">
+
+            <div style="max-width:600px;margin:auto;background:#fff;padding:30px;border-radius:10px;">
+
+                <h2 style="color:#2563eb;">
+                    Welcome to CA Connect
+                </h2>
+
+                <p>Hello <b>${fullName}</b>,</p>
+
+                <p>Your Admin Account has been created successfully.</p>
+
+                <table cellpadding="10">
+
+                    <tr>
+
+                        <td><b>Email</b></td>
+
+                        <td>${email}</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td><b>Password</b></td>
+
+                        <td>${password}</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td><b>Role</b></td>
+
+                        <td>${role}</td>
+
+                    </tr>
+
+                </table>
+
+                <br>
+
+                <a
+                href="http://localhost:5173/admin"
+                style="
+                background:#2563eb;
+                color:#fff;
+                text-decoration:none;
+                padding:12px 20px;
+                border-radius:8px;
+                display:inline-block;
+                ">
+
+                Login Now
+
+                </a>
+
+                <br><br>
+
+                <p>
+
+                    Regards,<br>
+
+                    CA Connect Team
+
+                </p>
+
+            </div>
+
+        </div>
+
+        `;
+
+        await sendMail(
+
+            email,
+
+            "CA Connect Login Details",
+
+            html
+
+        );
+
+        res.status(200).json({
+
+            success: true,
+
+            message: "Login details sent successfully."
+
+        });
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
 
         });
 

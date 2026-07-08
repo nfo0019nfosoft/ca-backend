@@ -1,10 +1,14 @@
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+
+const AdminAccount = require("../models/AdminAccount");
 
 const Vendor = require("../models/Vendor");
 const User = require("../models/User");
 const Enquiry = require("../models/Enquiry");
 const Ticket = require("../models/Ticket");
 const Consultation = require("../models/Consultation");
+const sendMail = require("../utils/sendMail");
 
 // =====================
 // ADMIN LOGIN
@@ -16,63 +20,39 @@ exports.adminLogin = async (req, res) => {
 
         const { email, password } = req.body;
 
+        console.log("LOGIN EMAIL =>", email);
+        console.log("LOGIN PASSWORD =>", password);
+
         const admin = await AdminAccount.findOne({
-            email
+            email: email.toLowerCase()
         });
 
+        console.log("ADMIN =>", admin);
+
         if (!admin) {
-
             return res.status(401).json({
-
                 success: false,
-
                 message: "Invalid Email or Password"
-
             });
-
         }
 
-        if (admin.status !== "Active") {
+        console.log("DB HASH =>", admin.password);
 
-            return res.status(403).json({
+        const isMatch = await bcrypt.compare(
+            password,
+            admin.password
+        );
 
-                success: false,
-
-                message: "Your account is inactive."
-
-            });
-
-        }
-
-        if (!admin.loginAccess) {
-
-            return res.status(403).json({
-
-                success: false,
-
-                message: "Login access disabled."
-
-            });
-
-        }
-
-        const isMatch =
-            await bcrypt.compare(
-                password,
-                admin.password
-            );
+        console.log("PASSWORD MATCH =>", isMatch);
 
         if (!isMatch) {
-
             return res.status(401).json({
-
                 success: false,
-
                 message: "Invalid Email or Password"
-
             });
-
         }
+
+      
 
         admin.lastLogin = new Date();
 
@@ -104,6 +84,8 @@ exports.adminLogin = async (req, res) => {
 
             success: true,
 
+            message: "Login Successful",
+
             token,
 
             role: admin.role,
@@ -116,12 +98,21 @@ exports.adminLogin = async (req, res) => {
 
                 email: admin.email,
 
+                phone: admin.phone,
+
                 role: admin.role,
+
+                status: admin.status,
 
                 profilePhoto: admin.profilePhoto,
 
-                mustChangePassword:
-                    admin.mustChangePassword
+                loginAccess: admin.loginAccess,
+
+                emailNotifications: admin.emailNotifications,
+
+                twoFactorEnabled: admin.twoFactorEnabled,
+
+                lastLogin: admin.lastLogin
 
             }
 
@@ -137,14 +128,13 @@ exports.adminLogin = async (req, res) => {
 
             success: false,
 
-            message: err.message
+            message: "Server Error"
 
         });
 
     }
 
 };
-
 
 // =====================
 // VENDOR STATS

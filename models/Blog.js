@@ -34,7 +34,7 @@ const blogSchema = new mongoose.Schema(
 
     author: {
       type: String,
-      default: "CA Connect Team"
+      default: "Bussult Team"
     },
 
     authorImage: {

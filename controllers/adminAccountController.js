@@ -579,7 +579,7 @@ exports.sendLoginDetails = async (req, res) => {
             <div style="max-width:600px;margin:auto;background:#fff;padding:30px;border-radius:10px;">
 
                 <h2 style="color:#2563eb;">
-                    Welcome to CA Connect
+                    Welcome to Bussult
                 </h2>
 
                 <p>Hello <b>${fullName}</b>,</p>
@@ -617,7 +617,7 @@ exports.sendLoginDetails = async (req, res) => {
                 <br>
 
                 <a
-                href="http://localhost:5173/admin"
+                href="https://bussult.vercel.app/admin"
                 style="
                 background:#2563eb;
                 color:#fff;
@@ -637,7 +637,7 @@ exports.sendLoginDetails = async (req, res) => {
 
                     Regards,<br>
 
-                    CA Connect Team
+                    Bussult Team
 
                 </p>
 
@@ -651,7 +651,7 @@ exports.sendLoginDetails = async (req, res) => {
 
             email,
 
-            "CA Connect Login Details",
+            "Bussult Login Details",
 
             html
 

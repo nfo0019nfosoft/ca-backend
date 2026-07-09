@@ -26,7 +26,7 @@ const sendMail = async (
 
     await transporter.sendMail({
 
-        from: `"CA Connect" <${process.env.EMAIL_USER}>`,
+        from: `"Bussult" <${process.env.EMAIL_USER}>`,
 
         to,
 
